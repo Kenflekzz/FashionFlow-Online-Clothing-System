@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Storage</title>
+</head>
+<body>
+    <h2>SessionStorage Test</h2>
+    <button onclick="setTestData()">Set Test Data</button>
+    <button onclick="getTestData()">Get Test Data</button>
+    <button onclick="clearTestData()">Clear Test Data</button>
+    <button onclick="redirectToDashboard()">Redirect to Dashboard</button>
+    <pre id="result"></pre>
+
+    <script>
+    function setTestData() {
+        sessionStorage.setItem('test_user_id', '12345');
+        sessionStorage.setItem('test_username', 'testuser');
+        sessionStorage.setItem('test_account_status', 'super admin');
+        document.getElementById('result').textContent = 'Test data set in sessionStorage';
+    }
+
+    function getTestData() {
+        const data = {
+            user_id: sessionStorage.getItem('test_user_id'),
+            username: sessionStorage.getItem('test_username'),
+            account_status: sessionStorage.getItem('test_account_status'),
+            all_keys: Object.keys(sessionStorage)
+        };
+        document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+    }
+
+    function clearTestData() {
+        sessionStorage.clear();
+        document.getElementById('result').textContent = 'sessionStorage cleared';
+    }
+
+    function redirectToDashboard() {
+        window.location.href = 'super_admin_dashboard.html';
+    }
+    </script>
+</body>
+</html> 

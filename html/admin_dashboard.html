@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | FashionFlow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/admin_dashboard.css">
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <div class="brand-icon">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <div class="brand-text">
+                <h1>Admin Panel</h1>
+                <span>FashionFlow</span>
+            </div>
+        </div>
+        <div class="nav-actions">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search products, orders, users...">
+            </div>
+            <div class="notification">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">5</span>
+            </div>
+            <div class="user-menu">
+                <img src="https://ui-avatars.com/api/?name=Admin+User&background=7c3e2e&color=fff&size=35" alt="Admin">
+                <div class="user-info">
+                    <p id="adminUserName">Admin User</p>
+                    <p>Administrator</p>
+                </div>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Layout -->
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="nav-section">
+                <div class="nav-section-title">Main</div>
+                <a href="#" class="nav-link active" onclick="showDashboard(); return false;">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-link" onclick="showProducts(); return false;">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Products</span>
+                </a>
+                <a href="#" class="nav-link" onclick="showOrders(); return false;">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="#" class="nav-link" onclick="showUsers(); return false;">
+                    <i class="fas fa-users"></i>
+                    <span>All Users</span>
+                </a>
+            </div>
+            <div class="nav-section">   
+                <div class="nav-section-title">Management</div>
+                <a href="#" class="nav-link" onclick="showStaffManagement(); return false;">
+                    <i class="fas fa-user-tie"></i>
+                    <span>Create User/Admin</span>
+                </a>
+                <a href="#" class="nav-link" onclick="showView('categories'); return false;">
+                    <i class="fas fa-tags"></i>
+                    <span>Categories</span>
+                </a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">System</div>
+                <a href="#" class="nav-link" onclick="showSecurityLogs(); return false;">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Security Logs</span>
+                </a>
+                <a href="#" class="nav-link" onclick="showReports(); return false;">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Reports</span>
+                </a>
+                <a href="#" class="nav-link logout-link" onclick="logout(); return false;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard View -->
+            <div id="dashboardView">
+                <div class="page-header">
+                    <div class="header-content">
+                        <h2>Dashboard Overview</h2>
+                        <p>Welcome back! Here's what's happening with your store today.</p>
+                    </div>
+                </div>
+                <div class="quick-stats">
+                    <div class="stat-box">
+                        <div class="stat-icon revenue"><i class="fas fa-dollar-sign"></i></div>
+                        <div class="stat-info"><h3>$24,500</h3><p>Today's Revenue</p></div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon orders"><i class="fas fa-shopping-cart"></i></div>
+                        <div class="stat-info"><h3>156</h3><p>New Orders</p></div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon customers"><i class="fas fa-users"></i></div>
+                        <div class="stat-info"><h3>89</h3><p>New Customers</p></div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon products"><i class="fas fa-box"></i></div>
+                        <div class="stat-info"><h3>1,247</h3><p>Total Products</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Logs View with Filters -->
+            <div id="securityLogsView" style="display: none;">
+                <div class="page-header">
+                    <div class="header-content">
+                        <h2><i class="fas fa-shield-alt"></i> Security Logs</h2>
+                        <p>Monitor login activity and security events.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Login Activity</h3>
+                        <div class="header-actions">
+                            <select id="adminEntriesPerPage" onchange="changeAdminEntriesPerPage()">
+                                <option value="5">5 entries</option>
+                                <option value="10" selected>10 entries</option>
+                                <option value="25">25 entries</option>
+                                <option value="50">50 entries</option>
+                            </select>
+                            <button class="btn-outline" onclick="refreshAdminLogs()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Filter Bar - Role Filter Removed -->
+                        <div class="filter-bar">
+                            <div class="filter-group">
+                                <label><i class="fas fa-user"></i> Username</label>
+                                <input type="text" id="filterUsername" placeholder="Search by username...">
+                            </div>
+                            <div class="filter-group">
+                                <label><i class="fas fa-sign-in-alt"></i> Login Date</label>
+                                <input type="date" id="filterLoginDate" placeholder="YYYY-MM-DD">
+                            </div>
+                            <div class="filter-group">
+                                <label><i class="fas fa-sign-out-alt"></i> Logout Date</label>
+                                <input type="date" id="filterLogoutDate" placeholder="YYYY-MM-DD">
+                            </div>
+                            <div class="filter-actions">
+                                <button class="btn-filter" onclick="applyAdminLogFilters()">
+                                    <i class="fas fa-filter"></i> Apply Filters
+                                </button>
+                                <button class="btn-clear" onclick="clearAdminLogFilters()">
+                                    <i class="fas fa-undo"></i> Clear
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th><th>User</th><th>Role</th><th>Device</th>
+                                        <th>IP Address</th><th>Login Time</th><th>Logout Time</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminLogsTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="pagination">
+                            <span>Showing <span id="adminStartEntry">0</span> to
+                            <span id="adminEndEntry">0</span> of
+                            <span id="adminTotalEntries">0</span> entries</span>
+                            <div id="adminPaginationButtons"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- All Users View -->
+            <div id="usersView" style="display: none;">
+                <div class="page-header">
+                    <div class="header-content">
+                        <h2><i class="fas fa-users"></i> All Users</h2>
+                        <p>Manage all user and admin accounts and view their activity.</p>
+                    </div>
+                </div>
+                <div id="customerStats" class="quick-stats"></div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Accounts List</h3>
+                        <div class="header-actions">
+                            <input type="text" id="customerSearch" placeholder="Search accounts..." class="search-input">
+                            <button class="btn-outline" onclick="exportCustomers()">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Account</th>
+                                        <th>Role</th>
+                                        <th>Email</th>
+                                        <th>Joined</th>
+                                        <th>Account Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customersTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div id="customerPagination" class="pagination"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Products View -->
+            <div id="productsView" style="display: none;">
+                <div class="page-header">
+                    <div class="header-content">
+                        <h2><i class="fas fa-shopping-bag"></i> Products</h2>
+                        <p>Manage your product inventory and catalog.</p>
+                    </div>
+                </div>
+                <div id="productStats" class="quick-stats"></div>
+                <div id="lowStockAlert" class="alert-card" style="display: none;">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Low Stock Alert</h4>
+                    <div id="lowStockBody"></div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Product List</h3>
+                        <div class="header-actions">
+                            <input type="text" id="productSearch" placeholder="Search products..." class="search-input">
+                            <button class="btn-primary" onclick="openProductModal()">
+                                <i class="fas fa-plus"></i> Add Product
+                            </button>
+                            <button class="btn-outline" onclick="exportProducts()">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th><th>SKU</th><th>Category</th>
+                                        <th>Price</th><th>Stock</th><th>Status</th>
+                                        <th>Updated</th><th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="productsTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div id="productPagination" class="pagination"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders View -->
+            <div id="ordersView" style="display: none;">
+                <div class="page-header">
+                    <div class="header-content">
+                        <h2><i class="fas fa-shopping-cart"></i> Orders</h2>
+                        <p>Process and manage customer orders.</p>
+                    </div>
+                </div>
+                <div id="orderPipeline" class="pipeline"></div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Order List</h3>
+                        <div class="header-actions">
+                            <input type="text" id="orderSearch" placeholder="Search orders..." class="search-input">
+                            <button class="btn-outline" onclick="exportOrders()">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                            <button class="btn-primary" onclick="bulkPrintLabels()">
+                                <i class="fas fa-print"></i> Print Labels
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" id="selectAllOrders" onchange="toggleSelectAllOrders()"></th>
+                                        <th>Order #</th><th>Customer</th><th>Items</th>
+                                        <th>Total</th><th>Status</th><th>Date</th><th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div id="orderPagination" class="pagination"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports View -->
+            <div id="reportsView" style="display: none;">
+                <div class="page-header">
+                    <div class="header-content">
+                        <h2><i class="fas fa-chart-bar"></i> Reports</h2>
+                        <p>View analytics and generate business reports.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3>Generate Report</h3></div>
+                    <div class="card-body">
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label>Date Range</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="date" id="reportDateFrom">
+                                    <input type="date" id="reportDateTo">
+                                </div>
+                            </div>
+                            <div class="form-field">
+                                <label>Report Type</label>
+                                <select id="reportType">
+                                    <option value="sales">Sales Report</option>
+                                    <option value="inventory">Inventory Report</option>
+                                    <option value="customers">Customer Report</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="margin-top: 20px;">
+                            <button class="btn-primary" onclick="generateReport()">
+                                <i class="fas fa-sync"></i> Generate
+                            </button>
+                            <button class="btn-outline" onclick="exportReportPDF()">
+                                <i class="fas fa-file-pdf"></i> Export PDF
+                            </button>
+                            <button class="btn-outline" onclick="exportReportExcel()">
+                                <i class="fas fa-file-excel"></i> Export Excel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Staff Management View -->
+            <div id="staffManagementView" style="display: none;">
+                <div class="page-header">
+                    <div class="header-content">
+                        <h2><i class="fas fa-user-tie"></i> Create User/Admin Account</h2>
+                        <p>Register new members and administrators with complete profile information.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <form id="registrationForm">
+                            <div class="form-grid">
+                                <div id="alertContainer"></div>
+                                <div class="form-section-header">
+                                    <h3>Role Assignment</h3>
+                                    <p>Select the role for this account</p>
+                                </div>
+                                <div class="role-selector" id="roleSelector">
+                                    <div class="role-option" onclick="selectStaffRole('user', event)">
+                                        <i class="fas fa-user"></i>
+                                        <div class="role-name">User</div>
+                                    </div>
+                                    <div class="role-option" onclick="selectStaffRole('admin', event)">
+                                        <i class="fas fa-user-shield"></i>
+                                        <div class="role-name">Administrator</div>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="staffSelectedRole" name="role" value="user">
+                                <div class="form-section-header">
+                                    <h3>Basic Information</h3>
+                                </div>
+                                <div class="form-field">
+                                    <label for="ID" class="required">User ID</label>
+                                    <input id="ID" name="ID" type="text" autocomplete="off" placeholder="example: xxxx-xxxx" required/>
+                                </div>
+                                <div class="form-field">
+                                    <label for="Fname" class="required">First Name</label>
+                                    <input id="Fname" name="first_name" type="text" autocomplete="given-name" required/>
+                                </div>
+                                <div class="form-field">
+                                    <label for="M-Initial">Middle Name <span class="optional-label">(optional)</span></label>
+                                    <input id="M-Initial" name="middle_initial" type="text" autocomplete="off"/>
+                                </div>
+                                <div class="form-field">
+                                    <label for="Lname" class="required">Last Name</label>
+                                    <input id="Lname" name="last_name" type="text" autocomplete="family-name" required/>
+                                </div>
+                                <div class="form-field">
+                                    <label for="Ename">Extension <span class="optional-label">(optional)</span></label>
+                                    <input type="text" id="Ename" name="extension" autocomplete="off" list="extensionOptions">
+                                    <datalist id="extensionOptions">
+                                        <option value="I"><option value="II"><option value="III"><option value="IV"><option value="V">
+                                        <option value="VI"><option value="VII"><option value="VIII"><option value="IX"><option value="X">
+                                        <option value="Sr."><option value="Jr.">
+                                    </datalist>
+                                </div>
+                                <div class="form-field">
+                                    <label for="birthdate" class="required">Birthdate</label>
+                                    <input id="birthdate" name="birthdate" type="date" required/>
+                                    <div id="ageDisplay" style="color:#999; font-size: 12px; margin-top: 5px;"></div>
+                                </div>
+                                <div class="form-field" style="margin-top: -10px;">
+                                    <label for="Sex" class="required">Sex</label>
+                                    <select id="Sex" name="sex" autocomplete="off" required>
+                                        <option disabled selected value="">Select Sex</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
+                                </div>
+                                <div class="form-section-header">
+                                    <h3>Account Credentials</h3>
+                                </div>
+                                <div class="form-field">
+                                    <label for="Username" class="required">Username</label>
+                                    <input id="Username" name="username" type="text" autocomplete="username" required/>
+                                </div>
+                                <div class="form-field">
+                                    <label for="Email" class="required">Email Address</label>
+                                    <input id="Email" name="email" type="email" autocomplete="email" required/>
+                                </div>
+                                <div class="form-field">
+                                    <label for="Password" class="required">Password</label>
+                                    <div class="password-container">
+                                        <input id="Password" name="password" type="password" autocomplete="new-password" required>
+                                        <i class="fas fa-eye" onclick="togglePassword('Password', this)" style="cursor: pointer;"></i>
+                                    </div>
+                                    <div id="passwordStrengthBar" class="password-strength-bar"></div>
+                                    <div id="passwordStrengthLabel" class="strength-label"></div>
+                                </div>
+                                <div class="form-field">
+                                    <label for="Re-password" class="required">Confirm Password</label>
+                                    <div class="password-container">
+                                        <input id="Re-password" name="re_password" type="password" autocomplete="new-password" required/>
+                                        <i class="fas fa-eye" onclick="togglePassword('Re-password', this)" style="cursor: pointer;"></i>
+                                    </div>
+                                </div>
+                                <div class="form-section-header">
+                                    <h3>Address Information</h3>
+                                </div>
+                                <div class="form-field">
+                                    <label for="Purok" class="required">Purok/Street</label>
+                                    <input id="Purok" name="purok" type="text" autocomplete="off" required/>
+                                </div>
+                                <div class="form-field">
+                                    <label for="Barangay" class="required">Barangay</label>
+                                    <input id="Barangay" name="barangay" type="text" autocomplete="off" required/>
+                                </div>
+                                <div class="form-field">
+                                    <label for="City" class="required">City/Municipality</label>
+                                    <input id="City" name="city_municipality" type="text" autocomplete="address-level2" required/>
+                                </div>
+                                <div class="form-field">
+                                    <label for="Province" class="required">Province</label>
+                                    <input id="Province" name="province" type="text" autocomplete="address-level1" required/>
+                                </div>
+                                <div class="form-field">
+                                    <label for="Country" class="required">Country</label>
+                                    <input id="Country" name="country" type="text" autocomplete="country" required/>
+                                </div>
+                                <div class="form-field">
+                                    <label for="Zip-code" class="required">Zip Code</label>
+                                    <input id="Zip-code" name="zip_code" type="text" autocomplete="postal-code" required/>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 30px;">
+                                <button type="reset" class="btn-outline">Clear Form</button>
+                                <button type="submit" class="btn-primary" id="submitButton">Create Account</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODALS -->
+            <div id="viewUserModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+                <div style="background:white; border-radius:16px; width:90%; max-width:650px; max-height:90vh; overflow-y:auto; box-shadow:0 25px 50px rgba(0,0,0,0.3);">
+                    <div style="padding:20px 25px; border-bottom:1px solid #e8ddd9; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(135deg,#7c3e2e,#5e2f22); border-radius:16px 16px 0 0; position:sticky; top:0; z-index:1;">
+                        <h3 style="margin:0; color:white; font-size:18px;"><i class="fas fa-user" style="margin-right:8px;"></i>Account Details</h3>
+                        <button onclick="closeViewUserModal()" style="background:rgba(255,255,255,0.2); border:none; color:white; width:32px; height:32px; border-radius:8px; cursor:pointer; font-size:16px;"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div style="padding:25px;">
+                        <div style="text-align:center; margin-bottom:25px; padding-bottom:20px; border-bottom:1px solid #e8ddd9;">
+                            <img id="viewUserAvatar" src="" alt="" style="width:80px; height:80px; border-radius:50%; border:3px solid #7c3e2e; margin-bottom:12px;">
+                            <h3 id="viewUserFullName" style="margin:0; color:#1e293b; font-size:20px;"></h3>
+                            <p id="viewUserUsernameDisplay" style="margin:5px 0 0; color:#64748b; font-size:14px;"></p>
+                            <span id="viewUserStatusBadge" style="display:inline-block; margin-top:8px; padding:4px 14px; border-radius:20px; font-size:12px; font-weight:600;"></span>
+                        </div>
+                        <p style="font-size:11px; text-transform:uppercase; color:#7c3e2e; font-weight:700; margin-bottom:12px; border-bottom:2px solid #e8ddd9; padding-bottom:6px;"><i class="fas fa-id-card" style="margin-right:6px;"></i>Personal Information</p>
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:20px;">
+                            <div><p style="font-size:11px; text-transform:uppercase; color:#94a3b8; font-weight:700; margin-bottom:4px;">User ID</p><p id="viewUserId" style="margin:0; font-weight:600; color:#1e293b; font-family:monospace; font-size:13px;"></p></div>
+                            <div><p style="font-size:11px; text-transform:uppercase; color:#94a3b8; font-weight:700; margin-bottom:4px;">First Name</p><p id="viewUserFname" style="margin:0; font-weight:600; color:#1e293b;"></p></div>
+                            <div><p style="font-size:11px; text-transform:uppercase; color:#94a3b8; font-weight:700; margin-bottom:4px;">Middle Name</p><p id="viewUserMname" style="margin:0; font-weight:600; color:#1e293b;"></p></div>
+                            <div><p style="font-size:11px; text-transform:uppercase; color:#94a3b8; font-weight:700; margin-bottom:4px;">Last Name</p><p id="viewUserLname" style="margin:0; font-weight:600; color:#1e293b;"></p></div>
+                            <div><p style="font-size:11px; text-transform:uppercase; color:#94a3b8; font-weight:700; margin-bottom:4px;">Extension</p><p id="viewUserExtension" style="margin:0; font-weight:600; color:#1e293b;"></p></div>
+                            <div><p style="font-size:11px; text-transform:uppercase; color:#94a3b8; font-weight:700; margin-bottom:4px;">Birthdate</p><p id="viewUserBirthdate" style="margin:0; font-weight:600; color:#1e293b;"></p></div>
+                            <div><p style="font-size:11px; text-transform:uppercase; color:#94a3b8; font-weight:700; margin-bottom:4px;">Sex</p><p id="viewUserSex" style="margin:0; font-weight:600; color:#1e293b;"></p></div>
+                        </div>
+                        <p style="font-size:11px; text-transform:uppercase; color:#7c3e2e; font-weight:700; margin-bottom:12px; border-bottom:2px solid #e8ddd9; padding-bottom:6px;"><i class="fas fa-user-cog" style="margin-right:6px;"></i>Account Information</p>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px;">
+                            <div><p style="font-size:11px; text-transform:uppercase; color:#94a3b8; font-weight:700; margin-bottom:4px;">Username</p><p id="viewUserUsername" style="margin:0; font-weight:600; color:#1e293b;"></p></div>
+                            <div><p style="font-size:11px; text-transform:uppercase; color:#94a3b8; font-weight:700; margin-bottom:4px;">Email</p><p id="viewUserEmail" style="margin:0; font-weight:600; color:#1e293b;"></p></div>
+                            <div><p style="font-size:11px; text-transform:uppercase; color:#94a3b8; font-weight:700; margin-bottom:4px;">Role</p><p id="viewUserRole" style="margin:0; font-weight:600; color:#1e293b;"></p></div>
+                            <div><p style="font-size:11px; text-transform:uppercase; color:#94a3b8; font-weight:700; margin-bottom:4px;">Joined</p><p id="viewUserJoined" style="margin:0; font-weight:600; color:#1e293b;"></p></div>
+                        </div>
+                        <p style="font-size:11px; text-transform:uppercase; color:#7c3e2e; font-weight:700; margin-bottom:12px; border-bottom:2px solid #e8ddd9; padding-bottom:6px;"><i class="fas fa-map-marker-alt" style="margin-right:6px;"></i>Address Information</p>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px;">
+                            <div><p style="font-size:11px; text-transform:uppercase; color:#94a3b8; font-weight:700; margin-bottom:4px;">Purok/Street</p><p id="viewUserPurok" style="margin:0; font-weight:600; color:#1e293b;"></p></div>
+                            <div><p style="font-size:11px; text-transform:uppercase; color:#94a3b8; font-weight:700; margin-bottom:4px;">Barangay</p><p id="viewUserBarangay" style="margin:0; font-weight:600; color:#1e293b;"></p></div>
+                            <div><p style="font-size:11px; text-transform:uppercase; color:#94a3b8; font-weight:700; margin-bottom:4px;">City/Municipality</p><p id="viewUserCity" style="margin:0; font-weight:600; color:#1e293b;"></p></div>
+                            <div><p style="font-size:11px; text-transform:uppercase; color:#94a3b8; font-weight:700; margin-bottom:4px;">Province</p><p id="viewUserProvince" style="margin:0; font-weight:600; color:#1e293b;"></p></div>
+                            <div><p style="font-size:11px; text-transform:uppercase; color:#94a3b8; font-weight:700; margin-bottom:4px;">Country</p><p id="viewUserCountry" style="margin:0; font-weight:600; color:#1e293b;"></p></div>
+                            <div><p style="font-size:11px; text-transform:uppercase; color:#94a3b8; font-weight:700; margin-bottom:4px;">Zip Code</p><p id="viewUserZip" style="margin:0; font-weight:600; color:#1e293b;"></p></div>
+                        </div>
+                        <div id="viewUserBlockInfo" style="display:none; background:#fee2e2; border-radius:10px; padding:15px; border-left:4px solid #ef4444;">
+                            <p style="font-size:11px; text-transform:uppercase; color:#991b1b; font-weight:700; margin-bottom:10px;"><i class="fas fa-ban" style="margin-right:6px;"></i>Block Information</p>
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                                <div><p style="font-size:11px; color:#7f1d1d; font-weight:600; margin-bottom:3px;">Reason</p><p id="viewUserBlockReason" style="margin:0; color:#991b1b; font-size:13px;"></p></div>
+                                <div><p style="font-size:11px; color:#7f1d1d; font-weight:600; margin-bottom:3px;">Blocked By</p><p id="viewUserBlockedBy" style="margin:0; color:#991b1b; font-size:13px;"></p></div>
+                                <div style="grid-column:1/-1;"><p style="font-size:11px; color:#7f1d1d; font-weight:600; margin-bottom:3px;">Blocked At</p><p id="viewUserBlockedAt" style="margin:0; color:#991b1b; font-size:13px;"></p></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="padding:15px 25px; border-top:1px solid #e8ddd9; display:flex; justify-content:flex-end; gap:10px; position:sticky; bottom:0; background:white; border-radius:0 0 16px 16px;">
+                        <button onclick="closeViewUserModal()" class="btn-outline">Close</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="editUserModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+                <div style="background:white; border-radius:16px; width:90%; max-width:700px; max-height:90vh; overflow-y:auto; box-shadow:0 25px 50px rgba(0,0,0,0.3);">
+                    <div style="padding:20px 25px; border-bottom:1px solid #e8ddd9; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(135deg,#7c3e2e,#5e2f22); border-radius:16px 16px 0 0; position:sticky; top:0; z-index:1;">
+                        <h3 style="margin:0; color:white; font-size:18px;"><i class="fas fa-edit" style="margin-right:8px;"></i>Edit Account</h3>
+                        <button onclick="closeEditUserModal()" style="background:rgba(255,255,255,0.2); border:none; color:white; width:32px; height:32px; border-radius:8px; cursor:pointer; font-size:16px;"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div style="padding:25px;">
+                        <input type="hidden" id="editUserId">
+                        <p style="font-size:11px; text-transform:uppercase; color:#7c3e2e; font-weight:700; margin-bottom:12px; border-bottom:2px solid #7c3e2e; padding-bottom:6px;"><i class="fas fa-id-card" style="margin-right:6px;"></i>Personal Information</p>
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:20px;">
+                            <div class="form-field"><label>User ID</label><input type="text" id="editUserIdDisplay" disabled style="background:#f3f4f6; color:#6b7280; cursor:not-allowed;"></div>
+                            <div class="form-field"><label>First Name <span style="color:red;">*</span></label><input type="text" id="editUserFname" placeholder="First name"></div>
+                            <div class="form-field"><label>Middle Name <span style="color:#94a3b8; font-size:11px;">(optional)</span></label><input type="text" id="editUserMname" placeholder="Middle initial"></div>
+                            <div class="form-field"><label>Last Name <span style="color:red;">*</span></label><input type="text" id="editUserLname" placeholder="Last name"></div>
+                            <div class="form-field"><label>Extension <span style="color:#94a3b8; font-size:11px;">(optional)</span></label><input type="text" id="editUserExtension" placeholder="Jr., Sr., III"></div>
+                            <div class="form-field"><label>Birthdate</label><input type="date" id="editUserBirthdate"></div>
+                            <div class="form-field"><label>Sex</label><select id="editUserSex"><option value="">Select</option><option value="Male">Male</option><option value="Female">Female</option></select></div>
+                        </div>
+                        <p style="font-size:11px; text-transform:uppercase; color:#7c3e2e; font-weight:700; margin-bottom:12px; border-bottom:2px solid #7c3e2e; padding-bottom:6px;"><i class="fas fa-user-cog" style="margin-right:6px;"></i>Account Information</p>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px;">
+                            <div class="form-field"><label>Username <span style="color:red;">*</span></label><input type="text" id="editUserUsername" placeholder="Username"></div>
+                            <div class="form-field"><label>Email <span style="color:red;">*</span></label><input type="email" id="editUserEmail" placeholder="Email"></div>
+                            <div class="form-field"><label>Role</label><input type="text" id="editUserRoleDisplay" disabled style="background:#f3f4f6; color:#6b7280; cursor:not-allowed;"></div>
+                            <div class="form-field"><label>Account Status</label><select id="editUserStatus"><option value="Active">Active</option><option value="Pending">Pending</option><option value="Suspended">Suspended</option></select></div>
+                        </div>
+                        <p style="font-size:11px; text-transform:uppercase; color:#7c3e2e; font-weight:700; margin-bottom:12px; border-bottom:2px solid #7c3e2e; padding-bottom:6px;"><i class="fas fa-map-marker-alt" style="margin-right:6px;"></i>Address Information</p>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+                            <div class="form-field"><label>Purok/Street</label><input type="text" id="editUserPurok" placeholder="Purok/Street"></div>
+                            <div class="form-field"><label>Barangay</label><input type="text" id="editUserBarangay" placeholder="Barangay"></div>
+                            <div class="form-field"><label>City/Municipality</label><input type="text" id="editUserCity" placeholder="City/Municipality"></div>
+                            <div class="form-field"><label>Province</label><input type="text" id="editUserProvince" placeholder="Province"></div>
+                            <div class="form-field"><label>Country</label><input type="text" id="editUserCountry" placeholder="Country"></div>
+                            <div class="form-field"><label>Zip Code</label><input type="text" id="editUserZip" placeholder="Zip Code"></div>
+                        </div>
+                    </div>
+                    <div style="padding:15px 25px; border-top:1px solid #e8ddd9; display:flex; justify-content:flex-end; gap:10px; position:sticky; bottom:0; background:white; border-radius:0 0 16px 16px;">
+                        <button onclick="closeEditUserModal()" class="btn-outline">Cancel</button>
+                        <button id="editUserSaveBtn" onclick="saveEditUser()" class="btn-primary"><i class="fas fa-save"></i> Save Changes</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="blockUserModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+                <div style="background:white; border-radius:16px; width:90%; max-width:420px; box-shadow:0 25px 50px rgba(0,0,0,0.3);">
+                    <div id="blockModalHeader" style="padding:20px 25px; border-bottom:1px solid #e8ddd9; display:flex; justify-content:space-between; align-items:center; border-radius:16px 16px 0 0;">
+                        <h3 id="blockModalTitle" style="margin:0; font-size:18px;"></h3>
+                        <button onclick="closeBlockUserModal()" style="background:#f3f4f6; border:none; width:32px; height:32px; border-radius:8px; cursor:pointer; font-size:16px; color:#374151;"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div style="padding:25px; text-align:center;">
+                        <div id="blockModalIcon" style="width:70px; height:70px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; font-size:28px;"></div>
+                        <p id="blockModalMessage" style="color:#64748b; margin:0 0 8px; font-size:15px;"></p>
+                        <p id="blockModalName" style="font-weight:700; font-size:16px; margin:0 0 20px;"></p>
+                        <div id="blockReasonContainer" style="display:none; text-align:left;">
+                            <label style="font-weight:600; font-size:13px; color:#374151; display:block; margin-bottom:6px;">Reason <span style="color:red;">*</span></label>
+                            <textarea id="blockReason" rows="3" placeholder="Enter reason for blocking..." style="width:100%; padding:10px 12px; border:2px solid #7c3e2e; border-radius:10px; font-size:13px; font-family:inherit; resize:vertical; box-sizing:border-box;"></textarea>
+                        </div>
+                    </div>
+                    <div style="padding:15px 25px; border-top:1px solid #e8ddd9; display:flex; justify-content:flex-end; gap:10px;">
+                        <button onclick="closeBlockUserModal()" class="btn-outline">Cancel</button>
+                        <button id="blockModalConfirmBtn" onclick="confirmBlockAction()" class="btn-primary"></button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="../php/script.php?dir=js&file=validation.js" defer></script>
+    <script src="../php/script.php?dir=js&file=eyeicon.js" defer></script>
+    <script src="../php/script.php?dir=js&file=admin_dashboard.js" defer></script>
+
+</body>
+</html>

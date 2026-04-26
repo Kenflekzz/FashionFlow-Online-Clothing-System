@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="../php/script.php?dir=css&file=sign-up.css">
+    <link rel="stylesheet" href="../php/script.php?dir=css&file=all.min.css">
+    <script src="../php/script.php?dir=js&file=validation.js" defer></script>
+    <script src="../php/script.php?dir=js&file=eyeicon.js" defer></script>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <img src="../image/FashionFLow-.png" alt="FashionFlow Logo">
+            <h1>Online Clothing System</h1>
+        </div>
+        <div class="navlogin">
+            <nav>
+                <ul style="list-style-type: none; display: flex; gap: 15px; padding: 0;">
+                    <li style="display: flex; align-items: center;">
+                        <a href="../html/Home.html" style="text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                            <i class="fa-solid fa-house" style="color: lightgreen;" title="Home"></i>
+                            <span style="color: white; font-size: 20px;">Home</span>
+                        </a>
+                    </li>
+                    <li style="display: flex; align-items: center;">
+                        <a href="../html/sign-in.html" style="text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                            <i class="fa-solid fa-right-to-bracket" style="color: orange;" title="Log in"></i>
+                            <span style="color: white; font-size: 20px;">Log in</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <form id="registrationForm" method="POST" action="../php/uservalidation.php">
+            <h1>REGISTER HERE</h1>
+            <hr>
+            
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step-dot active" id="dot1">1</div>
+                <div class="step-line" id="line1"></div>
+                <div class="step-dot" id="dot2">2</div>
+            </div>
+            <div class="step-labels">
+                <span class="active" id="label1">Personal Info</span>
+                <span id="label2">Security Questions</span>
+            </div>
+
+            <!-- Required field indicator -->
+            <div style="background: rgba(255, 255, 255, 0.5); padding: 15px; border-radius: 10px; margin: 10px 0;">
+                <p style="font-size: 12px; color: #666; margin: 0;">
+                    Fields marked with <span style="color: red; font-weight: bold;">*</span> are required.
+                </p>
+            </div>
+
+            <!-- ═══════════════════════════════════════════
+                 STEP 1: PERSONAL INFORMATION
+            ════════════════════════════════════════════ -->
+            <div class="form-step active" id="step1">
+                <div class="form-grid">
+
+                    <div class="form-field">
+                        <label for="ID">ID <span style="color:red;">*</span></label>
+                        <input id="ID" name="ID" type="text" autocomplete="off" placeholder="example: xxxx-xxxx"/>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="Fname">First Name <span style="color:red;">*</span></label>
+                        <input id="Fname" name="first_name" type="text" autocomplete="given-name"/>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="M-Initial">Middle Name <span style="color:red;">(optional)</span></label>
+                        <input id="M-Initial" name="middle_initial" type="text" autocomplete="off"/>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="Lname">Last Name <span style="color:red;">*</span></label>
+                        <input id="Lname" name="last_name" type="text" autocomplete="family-name"/>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="Ename">Extension <span style="color:red;">(optional)</span></label>
+                        <input type="text" id="Ename" name="extension" autocomplete="off" list="extensionOptions">
+                        <datalist id="extensionOptions">
+                            <option value="I">
+                            <option value="II">
+                            <option value="III">
+                            <option value="IV">
+                            <option value="V">
+                            <option value="VI">
+                            <option value="VII">
+                            <option value="VIII">
+                            <option value="IX">
+                            <option value="X">
+                            <option value="Sr.">
+                            <option value="Jr.">
+                        </datalist>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="birthdate">Birthdate <span style="color:red;">*</span></label>
+                        <input id="birthdate" name="birthdate" type="date" title="Birthdate" autocomplete="bday"/>
+                        <div id="ageDisplay" style="color: black;"></div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="Username">Username <span style="color:red;">*</span></label>
+                        <input id="Username" name="username" type="text" autocomplete="username"/>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="Password">Password <span style="color:red;">*</span></label>
+                        <div class="password-container">
+                            <input id="Password" name="password" type="password" autocomplete="new-password">
+                            <i class="fas fa-eye" onclick="return togglePassword('Password', this)" style="cursor: pointer;"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="Re-password">Confirm Password <span style="color:red;">*</span></label>
+                        <div class="password-container">
+                            <input id="Re-password" name="re_password" type="password" autocomplete="new-password"/>
+                            <i class="fas fa-eye" onclick="return togglePassword('Re-password', this)" style="cursor: pointer;"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="Email">Email Address <span style="color:red;">*</span></label>
+                        <input id="Email" name="email" type="email" autocomplete="email"/>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="Sex">Sex <span style="color:red;">*</span></label>
+                        <select name="sex" id="Sex" autocomplete="off">
+                            <option disabled selected value="">Select Sex</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="Purok">Purok/Street <span style="color:red;">*</span></label>
+                        <input id="Purok" name="purok" type="text" autocomplete="off"/>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="Barangay">Barangay <span style="color:red;">*</span></label>
+                        <input id="Barangay" name="barangay" type="text" autocomplete="off"/>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="City">City/Municipality <span style="color:red;">*</span></label>
+                        <input id="City" name="city_municipality" type="text" autocomplete="address-level2"/>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="Province">Province <span style="color:red;">*</span></label>
+                        <input id="Province" name="province" type="text" autocomplete="address-level1"/>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="Country">Country <span style="color:red;">*</span></label>
+                        <input id="Country" name="country" type="text" autocomplete="country"/>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="Zip-code">Zip Code <span style="color:red;">*</span></label>
+                        <input id="Zip-code" name="zip_code" type="text" autocomplete="postal-code"/>
+                    </div>
+
+                </div><!-- /form-grid -->
+
+                <div class="form-navigation">
+                    <div></div> <!-- Spacer for alignment -->
+                    <button type="button" class="btn-next" id="btnNext1" onclick="return validateStep1()">
+                        Next <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div><!-- /step1 -->
+
+            <!-- ═══════════════════════════════════════════
+                 STEP 2: SECURITY QUESTIONS
+            ════════════════════════════════════════════ -->
+            <div class="form-step" id="step2">
+                
+                <div class="security-header">
+                    <h3>Security Questions</h3>
+                    <p>These will be used to verify your identity if you forget your password.</p>
+                </div>
+
+                <!-- Container stubs for validation.js compatibility -->
+                <div id="secQ1Container" style="display: contents;"></div>
+                <div id="secQ2Container" style="display: contents;"></div>
+                <div id="secQ3Container" style="display: contents;"></div>
+                <div id="secA1Container" style="display: contents;"></div>
+                <div id="secA2Container" style="display: contents;"></div>
+                <div id="secA3Container" style="display: contents;"></div>
+
+                <div class="form-grid">
+                    <!-- Questions -->
+                    <div class="form-field">
+                        <label for="staffSecQuestion1">Security Question 1 <span style="color:red;">*</span></label>
+                        <select id="staffSecQuestion1" name="sec_question_1" required>
+                            <option disabled selected value="">Select a question</option>
+                            <option value="What was your childhood nickname?">What was your childhood nickname?</option>
+                            <option value="What is the name of your first pet?">What is the name of your first pet?</option>
+                            <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+                            <option value="What was the name of your first school?">What was the name of your first school?</option>
+                            <option value="What is your favorite movie?">What is your favorite movie?</option>
+                            <option value="In what city were you born?">In what city were you born?</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="staffSecQuestion2">Security Question 2 <span style="color:red;">*</span></label>
+                        <select id="staffSecQuestion2" name="sec_question_2" required>
+                            <option disabled selected value="">Select a question</option>
+                            <option value="What is your favorite food?">What is your favorite food?</option>
+                            <option value="What was the make of your first car?">What was the make of your first car?</option>
+                            <option value="What is your father's middle name?">What is your father's middle name?</option>
+                            <option value="What is the name of your favorite teacher?">What is the name of your favorite teacher?</option>
+                            <option value="What was your first job?">What was your first job?</option>
+                            <option value="What is the name of your best friend?">What is the name of your best friend?</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="staffSecQuestion3">Security Question 3 <span style="color:red;">*</span></label>
+                        <select id="staffSecQuestion3" name="sec_question_3" required>
+                            <option disabled selected value="">Select a question</option>
+                            <option value="What is your favorite color?">What is your favorite color?</option>
+                            <option value="What street did you grow up on?">What street did you grow up on?</option>
+                            <option value="What is your favorite sports team?">What is your favorite sports team?</option>
+                            <option value="What was your high school mascot?">What was your high school mascot?</option>
+                            <option value="What is your favorite book?">What is your favorite book?</option>
+                            <option value="What is your oldest sibling's middle name?">What is your oldest sibling's middle name?</option>
+                        </select>
+                    </div>
+
+                    <!-- Answers -->
+                    <div class="form-field">
+                        <label for="staffSecAnswer1">Answer 1 <span style="color:red;">*</span></label>
+                        <div class="password-container">
+                            <input id="staffSecAnswer1" name="sec_answer_1" type="password" required autocomplete="off">
+                            <i class="fas fa-eye" onclick="return togglePassword('staffSecAnswer1', this)" style="cursor: pointer;"></i>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="staffSecAnswer2">Answer 2 <span style="color:red;">*</span></label>
+                        <div class="password-container">
+                            <input id="staffSecAnswer2" name="sec_answer_2" type="password" required autocomplete="off">
+                            <i class="fas fa-eye" onclick="return togglePassword('staffSecAnswer2', this)" style="cursor: pointer;"></i>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="staffSecAnswer3">Answer 3 <span style="color:red;">*</span></label>
+                        <div class="password-container">
+                            <input id="staffSecAnswer3" name="sec_answer_3" type="password" required autocomplete="off">
+                            <i class="fas fa-eye" onclick="return togglePassword('staffSecAnswer3', this)" style="cursor: pointer;"></i>
+                        </div>
+                    </div>
+                </div><!-- /form-grid -->
+
+                <div class="form-navigation">
+                    <button type="button" class="btn-back" onclick="goToStep(1)">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button type="submit" class="btn-submit" id="submitButton">Sign Up</button>
+                </div>
+            </div><!-- /step2 -->
+
+            <hr>
+            <h4>Already have an account? <a href="../html/sign-in.html">Sign In</a></h4>
+        </form>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <p>&copy; 2024 FashionFlow. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        window.onload = function () {
+            function getQueryParam(param) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(param);
+            }
+            const errorMessage   = getQueryParam('error');
+            const successMessage = getQueryParam('success');
+            if (errorMessage)   alert(decodeURIComponent(errorMessage));
+            if (successMessage) alert(decodeURIComponent(successMessage));
+        };
+    </script>
+</body>
+</html>

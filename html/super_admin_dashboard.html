@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Dashboard | FashionFlow</title>
+    <link rel="stylesheet" href="../css/super_admin_dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SIDEBAR
+    ════════════════════════════════════════════════════════ -->
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-crown"></i>
+            <h2>Super Admin</h2>
+        </div>
+        <nav class="nav-menu">
+            <div class="nav-item active" onclick="showDashboard()">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item" onclick="showSection('admins')">
+                <i class="fas fa-users-cog"></i>
+                <span>Create Accounts</span>
+            </div>
+            <div class="nav-item" onclick="showSection('users')">
+                <i class="fas fa-user-shield"></i>
+                <span>All Accounts</span>
+            </div>
+            <div class="nav-item" onclick="showSecurityLogs()">
+                <i class="fas fa-shield-alt"></i>
+                <span>Security Logs</span>
+            </div>
+            <div class="nav-item" onclick="showSection('approvals')">
+                <i class="fas fa-user-check"></i>
+                <span>Registration Approvals</span>
+            </div>
+            <div class="nav-item" onclick="showSection('deleted')">
+                <i class="fas fa-user-slash"></i>
+                <span>Deleted Accounts</span>
+            </div>
+            <div class="nav-item" onclick="showSuperProducts()">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Products</span>
+            </div>
+            <div class="nav-item" onclick="showSuperOrders()">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Orders</span>
+            </div>
+            <div class="nav-item" onclick="showSuperCategories()">
+                <i class="fas fa-tags"></i>
+                <span>Categories</span>
+            </div>
+            <div class="nav-item" onclick="showSuperReports()">
+                <i class="fas fa-chart-bar"></i>
+                <span>Reports</span>
+            </div>
+            <div class="nav-item" onclick="logout()" style="margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1);">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         MAIN CONTENT
+    ════════════════════════════════════════════════════════ -->
+    <div class="main-content">
+
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1><i class="fas fa-crown" style="color: #fbbf24; margin-right: 10px;"></i>Super Admin Dashboard</h1>
+                <p style="color: #6b7280; margin-top: 5px;">Full system control and oversight</p>
+            </div>
+            <div class="header-actions">
+                <span class="badge"><i class="fas fa-exclamation-circle"></i> 3 Critical Alerts</span>
+                <div class="user-profile">
+                    <div class="admin-avatar">SA</div>
+                    <div>
+                        <p style="font-weight: 600;" id="adminName">Super Admin</p>
+                        <p style="font-size: 12px; color: #6b7280;">superadmin@fashionflow.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════
+             SECTION: DASHBOARD (default view)
+        ════════════════════════════════════════════════════ -->
+        <div id="dashboardContent">
+            <div class="content-grid" style="grid-template-columns: 1fr;">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-history" style="color:#4f46e5; margin-right:10px;"></i>Recent Account Activity</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="activity-filter-bar" style="display: flex; gap: 12px; margin-bottom: 20px; padding: 15px; background: #f9fafb; border-radius: 12px; flex-wrap: wrap; align-items: flex-end;">
+                            <div style="flex: 1; min-width: 180px;">
+                                <label style="display: block; font-size: 12px; font-weight: 600; color: #6b7280; margin-bottom: 5px;"><i class="fas fa-calendar-alt"></i> Filter by Date</label>
+                                <input type="date" id="activityDateFilter" class="form-control" style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 8px;">
+                            </div>
+                            <div style="flex: 2; min-width: 200px;">
+                                <label style="display: block; font-size: 12px; font-weight: 600; color: #6b7280; margin-bottom: 5px;"><i class="fas fa-search"></i> Search</label>
+                                <div style="position: relative;">
+                                    <input type="text" id="activitySearchInput" class="form-control" placeholder="Search by username, activity, or description..." style="width: 100%; padding: 8px 12px 8px 35px; border: 1px solid #d1d5db; border-radius: 8px;">
+                                    <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 14px;"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <button class="btn btn-primary btn-sm" onclick="filterRecentActivity()" style="padding: 8px 16px;"><i class="fas fa-filter"></i> Filter</button>
+                            </div>
+                            <div>
+                                <button class="btn btn-secondary btn-sm" onclick="clearRecentActivityFilters()" style="padding: 8px 16px;"><i class="fas fa-undo"></i> Clear</button>
+                            </div>
+                            <div style="margin-left: auto;">
+                                <label style="display: block; font-size: 12px; font-weight: 600; color: #6b7280; margin-bottom: 5px;"><i class="fas fa-list"></i> Show</label>
+                                <select id="recentActivityPerPage" onchange="changeRecentActivityPerPage()" style="padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 8px;">
+                                    <option value="5" selected>5 per page</option>
+                                    <option value="10">10 per page</option>
+                                    <option value="25">25 per page</option>
+                                    <option value="50">50 per page</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="overflow-x: auto;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Account</th>
+                                        <th>Role</th>
+                                        <th>Activity</th>
+                                        <th>Description</th>
+                                        <th>Date & Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentActivityTableBody">
+                                    <tr><td colspan="5" style="text-align:center; padding:30px;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="logs-pagination-container" style="margin-top: 20px;">
+                            <div class="logs-pagination-info"><span id="recentActivityShowingInfo">Showing 0 of 0 activities</span></div>
+                            <div class="logs-pagination-controls" id="recentActivityPagination"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: MANAGE ADMINS (Create Accounts) -->
+        <div id="manageAdminsSection" style="display: none;">
+            <div class="admin-management">
+                <div class="admin-header"><h2><i class="fas fa-users-cog" style="color: #4f46e5;"></i>Manage Administrators</h2></div>
+                <div class="create-admin-form">
+                    <h3><i class="fas fa-user-plus" style="color: #4f46e5;"></i>Create New Account</h3>
+                    <div id="alertContainer"></div>
+                    <form id="registrationForm" method="POST" action="../php/admin_create_account.php">
+                        <input type="hidden" id="staffSelectedRole" name="account_status" value="user">
+                        <div class="form-field" style="margin-bottom: 25px; grid-column: 1 / -1;">
+                            <label style="font-size: 16px; font-weight: 600;">Account Type <span style="color: #dc2626;">*</span></label>
+                            <div style="display: flex; gap: 25px; margin-top: 12px; flex-wrap: wrap;">
+                                <label class="role-option" style="display: flex; flex-direction: column; align-items: center; cursor: pointer; padding: 20px 30px; border: 2px solid #3b82f6; border-radius: 12px; background-color: #eff6ff;">
+                                    <input type="radio" name="account_status_radio" value="user" checked style="display: none;" onchange="document.getElementById('staffSelectedRole').value=this.value; togglePrivilegesSection(); updateRoleSelectionStyle(this);">
+                                    <i class="fas fa-user" style="color: #3b82f6; font-size: 42px;"></i>
+                                    <span style="font-size: 16px; font-weight: 600;">Regular User</span>
+                                </label>
+                                <label class="role-option" style="display: flex; flex-direction: column; align-items: center; cursor: pointer; padding: 20px 30px; border: 2px solid #e5e7eb; border-radius: 12px;">
+                                    <input type="radio" name="account_status_radio" value="admin" style="display: none;" onchange="document.getElementById('staffSelectedRole').value=this.value; togglePrivilegesSection(); updateRoleSelectionStyle(this);">
+                                    <i class="fas fa-user-shield" style="color: #4f46e5; font-size: 42px;"></i>
+                                    <span style="font-size: 16px; font-weight: 600;">Administrator</span>
+                                </label>
+                                <label class="role-option" style="display: flex; flex-direction: column; align-items: center; cursor: pointer; padding: 20px 30px; border: 2px solid #e5e7eb; border-radius: 12px;">
+                                    <input type="radio" name="account_status_radio" value="super admin" style="display: none;" onchange="document.getElementById('staffSelectedRole').value=this.value; togglePrivilegesSection(); updateRoleSelectionStyle(this);">
+                                    <i class="fas fa-crown" style="color: #fbbf24; font-size: 42px;"></i>
+                                    <span style="font-size: 16px; font-weight: 600;">Super Administrator</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div id="privilegesSection" class="privileges-section" style="display: none;">
+                            <div class="section-header"><div class="section-icon purple"><i class="fas fa-user-lock"></i></div><h4>Privileges Designation</h4></div>
+                            <div id="privilegeContainer" class="privileges-grid"></div>
+                            <div class="privilege-quick-actions">
+                                <button type="button" class="btn-quick" onclick="selectAllAllowed(true)"><i class="fas fa-check-square"></i> Select All</button>
+                                <button type="button" class="btn-quick" onclick="selectAllAllowed(false)"><i class="fas fa-square"></i> Deselect All</button>
+                            </div>
+                        </div>
+                        <div id="superAdminNotice" class="super-admin-notice" style="display: none;">
+                            <div class="notice-content"><i class="fas fa-crown"></i><span>Super Admin has all privileges by default.</span></div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-field"><label>User ID <span style="color: #dc2626;">*</span></label><input id="ID" name="ID" type="text"></div>
+                            <div class="form-field"><label>First Name <span style="color: #dc2626;">*</span></label><input id="Fname" name="first_name" type="text"></div>
+                            <div class="form-field"><label>Middle Name</label><input id="M-Initial" name="middle_initial" type="text"></div>
+                            <div class="form-field"><label>Last Name <span style="color: #dc2626;">*</span></label><input id="Lname" name="last_name" type="text"></div>
+                            <div class="form-field"><label>Extension</label><input id="Ename" name="extension" type="text"></div>
+                            <div class="form-field"><label>Birthdate <span style="color: #dc2626;">*</span></label><input id="birthdate" name="birthdate" type="date"><div id="ageDisplay" style="font-size: 12px; margin-top: 4px;"></div></div>
+                            <div class="form-field"><label>Username <span style="color: #dc2626;">*</span></label><input id="Username" name="username" type="text"></div>
+                            <div class="form-field"><label>Password <span style="color: #dc2626;">*</span></label><div class="password-container"><input id="Password" name="password" type="password"><i class="fas fa-eye" onclick="return togglePassword('Password', this)"></i></div><div class="password-strength"><div id="passwordStrengthBar" class="password-strength-bar"></div><div id="passwordStrengthLabel" class="strength-label"></div></div></div>
+                            <div class="form-field"><label>Confirm Password <span style="color: #dc2626;">*</span></label><div class="password-container"><input id="Re-password" name="re_password" type="password"><i class="fas fa-eye" onclick="return togglePassword('Re-password', this)"></i></div></div>
+                            <div class="form-field"><label>Email <span style="color: #dc2626;">*</span></label><input id="Email" name="email" type="email"></div>
+                            <div class="form-field"><label>Sex <span style="color: #dc2626;">*</span></label><select id="Sex" name="sex"><option value="">Select</option><option value="Male">Male</option><option value="Female">Female</option></select></div>
+                            <div class="form-field"><label>Purok/Street <span style="color: #dc2626;">*</span></label><input id="Purok" name="purok" type="text"></div>
+                            <div class="form-field"><label>Barangay <span style="color: #dc2626;">*</span></label><input id="Barangay" name="barangay" type="text"></div>
+                            <div class="form-field"><label>City <span style="color: #dc2626;">*</span></label><input id="City" name="city_municipality" type="text"></div>
+                            <div class="form-field"><label>Province <span style="color: #dc2626;">*</span></label><input id="Province" name="province" type="text"></div>
+                            <div class="form-field"><label>Country <span style="color: #dc2626;">*</span></label><input id="Country" name="country" type="text" value="Philippines"></div>
+                            <div class="form-field"><label>Zip Code <span style="color: #dc2626;">*</span></label><input id="Zip-code" name="zip_code" type="text"></div>
+                        </div>
+                        <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #e5e7eb;">
+                            <button type="button" class="btn btn-secondary" onclick="resetForm()"><i class="fas fa-undo"></i> Reset</button>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Create Account</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: ALL ACCOUNTS -->
+        <div id="usersSection" style="display: none;">
+            <div class="admin-management">
+                <div class="admin-header"><h2><i class="fas fa-users"></i>All Users</h2></div>
+                <div class="admin-stats">
+                    <div class="admin-stat-card"><h4>Total Users</h4><div class="number" id="totalAllUsers">0</div></div>
+                    <div class="admin-stat-card"><h4>Regular Users</h4><div class="number" id="regularUsersCount" style="color: #3b82f6;">0</div></div>
+                    <div class="admin-stat-card"><h4>Admins</h4><div class="number" id="adminUsersCount" style="color: #10b981;">0</div></div>
+                    <div class="admin-stat-card"><h4>Super Admins</h4><div class="number" id="superAdminUsersCount" style="color: #f59e0b;">0</div></div>
+                    <div class="admin-stat-card"><h4>Blocked</h4><div class="number" id="blockedUsersCount" style="color: #ef4444;">0</div></div>
+                </div>
+                <div class="create-admin-form">
+                    <div class="table-actions">
+                        <div class="search-box"><i class="fas fa-search"></i><input type="text" id="allUsersSearch" placeholder="Search..." onkeyup="searchAllUsers()"></div>
+                        <select id="allUsersRoleFilter" onchange="filterAllUsers()"><option value="all">All Roles</option><option value="user">Users</option><option value="admin">Admins</option><option value="super admin">Super Admins</option></select>
+                        <select id="allUsersStatusFilter" onchange="filterAllUsers()"><option value="all">All Status</option><option value="active">Active</option><option value="blocked">Blocked</option></select>
+                        <button class="btn btn-secondary" onclick="refreshAllUsersTable()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                        <button class="btn btn-primary" onclick="exportAllUsers()"><i class="fas fa-download"></i> Export</button>
+                    </div>
+                </div>
+                <div class="admins-table-container">
+                    <table class="admins-table">
+                        <thead><tr><th>User</th><th>Role</th><th>Status</th><th>Last Login</th><th>Last Logout</th><th>Joined</th><th>Actions</th></tr></thead>
+                        <tbody id="allUsersTableBody"><tr><td colspan="7" style="text-align:center; padding:40px;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr></tbody>
+                    </table>
+                    <div class="logs-pagination-container">
+                        <div class="logs-pagination-info"><span id="allUsersShowingInfo">Showing 0 of 0 users</span></div>
+                        <div class="logs-pagination-controls" id="allUsersPagination"></div>
+                        <div class="logs-items-per-page"><select id="allUsersPerPage" onchange="changeAllUsersPerPage()"><option value="5">5</option><option value="10">10</option><option value="25">25</option><option value="50">50</option></select><span>per page</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: SECURITY LOGS -->
+<div id="securityLogsSection" style="display: none;">
+    <div class="card">
+        <div class="card-header">
+            <h2><i class="fas fa-shield-alt" style="color: #dc2626;"></i>Security Logs</h2>
+            <div><button class="btn btn-primary" onclick="refreshLogs()"><i class="fas fa-sync-alt"></i> Refresh</button><button class="btn btn-primary" onclick="exportLogs()"><i class="fas fa-download"></i> Export</button></div>
+        </div>
+        <div class="card-body">
+            <div class="logs-filter">
+                <input type="text" id="logSearch" placeholder="Search username...">
+                <select id="logRoleFilter" onchange="filterLogs()">
+                    <option value="all">All Roles</option>
+                    <option value="admin">🛡️ Admin</option>
+                    <option value="user">👤 User</option>
+                </select>
+                <select id="logStatusFilter" onchange="filterLogs()">
+                    <option value="all">All Status</option>
+                    <option value="success">✅ Success</option>
+                    <option value="failed">❌ Failed</option>
+                </select>
+                <input type="date" id="logLoginDate" onchange="filterLogs()" placeholder="Login Date">
+                <input type="date" id="logLogoutDate" onchange="filterLogs()" placeholder="Logout Date">
+                <button onclick="clearLogsDateFilter()" class="btn btn-secondary">Clear Dates</button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Device</th>
+                            <th>IP Address</th>
+                            <th>Login Time</th>
+                            <th>Logout Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsTableBody">
+                        <tr><td colspan="8" style="text-align:center; padding:40px;"><i class="fas fa-spinner fa-spin"></i> Loading...<\/td><\/tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="logs-pagination-container">
+                <div class="logs-pagination-info"><span id="logsShowingInfo">Showing 0 of 0 logs</span></div>
+                <div class="logs-pagination-controls" id="logsPagination"></div>
+                <div class="logs-items-per-page">
+                    <select id="logsPerPage" onchange="changeLogsPerPage()">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                    <span>per page</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- SECTION: REGISTRATION APPROVALS -->
+        <div id="registrationApprovalsSection" style="display: none;">
+            <div class="admin-management">
+                <div class="admin-header"><h2><i class="fas fa-user-check" style="color: #10b981;"></i>Registration Approvals</h2></div>
+                <div class="admin-stats">
+                    <div class="admin-stat-card"><h4>Pending</h4><div class="number" id="pendingRegistrations" style="color: #f59e0b;">0</div></div>
+                    <div class="admin-stat-card"><h4>Approved Today</h4><div class="number" id="approvedToday" style="color: #10b981;">0</div></div>
+                    <div class="admin-stat-card"><h4>Rejected (7d)</h4><div class="number" id="rejectedThisWeek" style="color: #ef4444;">0</div></div>
+                    <div class="admin-stat-card"><h4>Total (30d)</h4><div class="number" id="totalThisMonth" style="color: #4f46e5;">0</div></div>
+                </div>
+                <div class="admins-table-container">
+                    <table class="admins-table">
+                        <thead><tr><th>User ID</th><th>User Details</th><th>Contact</th><th>Status</th><th>Registered</th><th>Actions</th></tr></thead>
+                        <tbody id="registrationsTableBody"><tr><td colspan="6" style="text-align:center; padding:40px;"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr></tbody>
+                    </table>
+                    <div class="logs-pagination-container">
+                        <div class="logs-pagination-info"><span id="registrationsShowingInfo">Showing 0 of 0 requests</span></div>
+                        <div class="logs-pagination-controls" id="registrationsPagination"></div>
+                        <div class="logs-items-per-page"><select id="registrationsPerPage" onchange="changeRegistrationsPerPage()"><option value="5">5</option><option value="10">10</option><option value="25">25</option><option value="50">50</option></select><span>per page</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════
+             SECTION: DELETED ACCOUNTS
+             Columns: # | Deleted Account | Reason | Requested By | Deleted By | Authorization Proof | Deleted At
+             Actions column REMOVED
+        ════════════════════════════════════════════════════ -->
+        <div id="deletedAccountsSection" style="display: none;">
+            <div class="admin-management">
+                <div class="admin-header"><h2><i class="fas fa-user-slash" style="color: #ef4444;"></i>Deleted Accounts</h2></div>
+                <div class="admin-stats">
+                    <div class="admin-stat-card"><h4>Total Deleted</h4><div class="number" id="totalDeletedCount">0</div></div>
+                    <div class="admin-stat-card"><h4>Deleted This Month</h4><div class="number" id="deletedThisMonth">0</div></div>
+                    <div class="admin-stat-card"><h4>Deleted This Week</h4><div class="number" id="deletedThisWeek">0</div></div>
+                </div>
+                <div class="admins-table-container">
+                    <div style="overflow-x: auto;">
+                        <table class="admins-table" id="deletedAccountsTable">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Deleted Account</th>
+                                    <th>Reason</th>
+                                    <th>Requested By</th>
+                                    <th>Deleted By</th>
+                                    <th>Authorization Proof</th>
+                                    <th>Deleted At</th>
+                                </tr>
+                            </thead>
+                            <tbody id="deletedAccountsTableBody">
+                                <tr>
+                                    <td colspan="7" style="text-align:center; padding:40px; color:#6b7280;">
+                                        <i class="fas fa-spinner fa-spin" style="font-size:24px; display:block; margin-bottom:10px;"></i>
+                                        Loading deleted accounts...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="logs-pagination-container" style="margin-top: 20px;">
+                        <div class="logs-pagination-info"><span id="deletedShowingInfo">Showing 0 of 0 records</span></div>
+                        <div class="logs-pagination-controls" id="deletedPagination"></div>
+                        <div class="logs-items-per-page">
+                            <label>Show:</label>
+                            <select id="deletedPerPage" onchange="changeDeletedPerPage()">
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                            </select>
+                            <span>per page</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PRODUCTS, ORDERS, CATEGORIES, REPORTS sections -->
+        <div id="superProductsSection" style="display: none;"><div class="card"><div class="card-header"><h2>Products</h2><button class="btn btn-primary" onclick="openSuperProductModal()">Add Product</button></div><div class="card-body"><table class="data-table"><thead><tr><th>Product</th><th>SKU</th><th>Price</th><th>Stock</th><th>Actions</th></tr></thead><tbody id="superProductsTableBody"><tr><td colspan="5">Loading...</td></tr></tbody></table></div></div></div>
+        <div id="superOrdersSection" style="display: none;"><div class="card"><div class="card-header"><h2>Orders</h2></div><div class="card-body"><table class="data-table"><thead><tr><th>Order #</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody id="superOrdersTableBody"><tr><td colspan="6">Loading...</td></tr></tbody></table></div></div></div>
+        <div id="superCategoriesSection" style="display: none;"><div class="card"><div class="card-header"><h2>Categories</h2><button class="btn btn-primary" onclick="openSuperCategoryModal()">Add Category</button></div><div class="card-body"><table class="data-table"><thead><tr><th>Category</th><th>Slug</th><th>Products</th><th>Status</th><th>Actions</th></tr></thead><tbody id="superCategoriesTableBody"><tr><td colspan="5">Loading...</td></tr></tbody></table></div></div></div>
+        <div id="superReportsSection" style="display: none;"><div class="card"><div class="card-header"><h2>Reports</h2></div><div class="card-body"><button class="btn btn-primary" onclick="generateSuperReport()">Generate Report</button><div id="superReportOutput"></div></div></div></div>
+
+        <!-- ============================================
+             MODALS
+        ============================================= -->
+
+        <!-- View User Modal -->
+        <div id="viewUserModal" class="modal-overlay" style="display: none;">
+            <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+                <div class="modal-header"><h3><i class="fas fa-user" style="color: #4f46e5; margin-right: 10px;"></i>User Details</h3><button class="modal-close" onclick="closeViewUserModal()"><i class="fas fa-times"></i></button></div>
+                <div class="modal-body">
+                    <div style="text-align: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 2px solid #e5e7eb;">
+                        <div id="viewUserAvatar" style="width: 100px; height: 100px; border-radius: 50%; background: #4f46e5; color: white; display: inline-flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 600; margin-bottom: 15px; border: 4px solid #e0e7ff;"></div>
+                        <h3 id="viewUserFullName" style="margin: 0; color: #1f2937; font-size: 24px;"></h3>
+                        <p id="viewUserRole" style="color: #6b7280; margin: 8px 0; font-size: 16px;"></p>
+                        <span id="viewUserStatusBadge" class="status-badge" style="font-size: 14px; padding: 6px 16px;"></span>
+                    </div>
+                    <div style="margin-bottom: 25px;">
+                        <label style="color: #6b7280; font-size: 12px; text-transform: uppercase; font-weight: 600; margin-bottom: 15px; display: block; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;"><i class="fas fa-id-card" style="margin-right: 8px; color: #4f46e5;"></i>Personal Information</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                            <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">ID</label><p id="viewUserId" style="margin: 0; font-weight: 500; font-family: monospace; color: #4f46e5;"></p></div>
+                            <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">First Name</label><p id="viewUserFname" style="margin: 0; font-weight: 500;"></p></div>
+                            <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Middle Name</label><p id="viewUserMname" style="margin: 0; font-weight: 500;"></p></div>
+                            <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Last Name</label><p id="viewUserLname" style="margin: 0; font-weight: 500;"></p></div>
+                            <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Extension</label><p id="viewUserExtension" style="margin: 0; font-weight: 500;"></p></div>
+                            <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Birthdate</label><p id="viewUserBirthdate" style="margin: 0; font-weight: 500;"></p></div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 25px;">
+                        <label style="color: #6b7280; font-size: 12px; text-transform: uppercase; font-weight: 600; margin-bottom: 15px; display: block; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;"><i class="fas fa-user-cog" style="margin-right: 8px; color: #4f46e5;"></i>Account Information</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Username</label><p id="viewUserUsername" style="margin: 0; font-weight: 500;"></p></div>
+                            <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Email</label><p id="viewUserEmail" style="margin: 0; font-weight: 500;"></p></div>
+                            <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Phone</label><p id="viewUserPhone" style="margin: 0; font-weight: 500;"></p></div>
+                            <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Sex</label><p id="viewUserSex" style="margin: 0; font-weight: 500;"></p></div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 25px;">
+                        <label style="color: #6b7280; font-size: 12px; text-transform: uppercase; font-weight: 600; margin-bottom: 15px; display: block; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;"><i class="fas fa-map-marker-alt" style="margin-right: 8px; color: #4f46e5;"></i>Address Information</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Purok/Street</label><p id="viewUserPurok" style="margin: 0; font-weight: 500;"></p></div>
+                            <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Barangay</label><p id="viewUserBarangay" style="margin: 0; font-weight: 500;"></p></div>
+                            <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">City/Municipality</label><p id="viewUserCity" style="margin: 0; font-weight: 500;"></p></div>
+                            <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Province</label><p id="viewUserProvince" style="margin: 0; font-weight: 500;"></p></div>
+                            <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Country</label><p id="viewUserCountry" style="margin: 0; font-weight: 500;"></p></div>
+                            <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Zip Code</label><p id="viewUserZip" style="margin: 0; font-weight: 500;"></p></div>
+                        </div>
+                    </div>
+                    <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <label style="color: #6b7280; font-size: 12px; text-transform: uppercase; font-weight: 600; margin-bottom: 10px; display: block;"><i class="fas fa-info-circle" style="margin-right: 8px;"></i>System Information</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px;">
+                            <div><span style="color: #6b7280;">Joined Date:</span><p id="viewUserJoined" style="margin: 0; font-weight: 500;"></p></div>
+                            <div><span style="color: #6b7280;">Last Login:</span><p id="viewUserLastLogin" style="margin: 0; font-weight: 500;"></p></div>
+                        </div>
+                    </div>
+                    <div id="viewUserPrivilegesSection" style="margin-bottom: 20px; display: none;">
+                        <label style="color: #6b7280; font-size: 12px; text-transform: uppercase; font-weight: 600; margin-bottom: 15px; display: block; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;"><i class="fas fa-user-lock" style="margin-right: 8px; color: #4f46e5;"></i>Assigned Privileges</label>
+                        <div id="viewUserPrivileges" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;"></div>
+                    </div>
+                    <div id="viewUserBlockInfo" style="display: none; margin-top: 20px; padding: 15px; background: #fee2e2; border-radius: 8px; border-left: 4px solid #ef4444;">
+                        <label style="color: #dc2626; font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 10px;"><i class="fas fa-ban"></i> Block Information</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px;">
+                            <div><span style="color: #7f1d1d; font-weight: 500;">Reason:</span><p id="viewUserBlockReason" style="margin: 5px 0 0 0; color: #991b1b;"></p></div>
+                            <div><span style="color: #7f1d1d; font-weight: 500;">Blocked By:</span><p id="viewUserBlockedBy" style="margin: 5px 0 0 0; color: #991b1b;"></p></div>
+                            <div style="grid-column: 1 / -1;"><span style="color: #7f1d1d; font-weight: 500;">Blocked At:</span><p id="viewUserBlockedAt" style="margin: 5px 0 0 0; color: #991b1b;"></p></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn btn-secondary" onclick="closeViewUserModal()">Close</button></div>
+            </div>
+        </div>
+
+        <!-- Block User Modal -->
+        <div id="blockUserModal" class="modal-overlay" style="display: none;">
+            <div class="modal-content" style="max-width: 500px;">
+                <div class="modal-header"><h3><i class="fas fa-ban" style="color: #ef4444; margin-right: 10px;"></i>Block User</h3><button class="modal-close" onclick="closeBlockUserModal()"><i class="fas fa-times"></i></button></div>
+                <div class="modal-body">
+                    <input type="hidden" id="blockUserId">
+                    <input type="hidden" id="blockUserUsername">
+                    <div style="margin-bottom: 20px;"><label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">User to Block:</label><p id="blockUserDisplayName" style="padding: 10px; background: #f3f4f6; border-radius: 8px; margin: 0; font-weight: 500;"></p></div>
+                    <div style="margin-bottom: 20px;"><label for="blockUserReason" style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Reason for Blocking:</label><textarea id="blockUserReason" rows="4" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: inherit; resize: vertical;" placeholder="Provide a detailed reason..."></textarea></div>
+                </div>
+                <div class="modal-footer" style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button class="btn btn-secondary" onclick="closeBlockUserModal()">Cancel</button>
+                    <button class="btn btn-danger" onclick="confirmBlockUser()"><i class="fas fa-ban"></i> Block User</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unblock User Modal -->
+        <div id="unblockUserModal" class="modal-overlay" style="display: none;">
+            <div class="modal-content" style="max-width: 500px;">
+                <div class="modal-header"><h3><i class="fas fa-unlock" style="color: #10b981; margin-right: 10px;"></i>Unblock User</h3><button class="modal-close" onclick="closeUnblockUserModal()"><i class="fas fa-times"></i></button></div>
+                <div class="modal-body">
+                    <input type="hidden" id="unblockUserId">
+                    <div style="margin-bottom: 20px;"><label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">User to Unblock:</label><p id="unblockUserDisplayName" style="padding: 10px; background: #f3f4f6; border-radius: 8px; margin: 0; font-weight: 500;"></p></div>
+                    <div style="margin-bottom: 20px;"><label for="unblockUserReason" style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Reason for Unblocking (Optional):</label><textarea id="unblockUserReason" rows="3" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: inherit; resize: vertical;" placeholder="Provide a reason..."></textarea></div>
+                </div>
+                <div class="modal-footer" style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button class="btn btn-secondary" onclick="closeUnblockUserModal()">Cancel</button>
+                    <button class="btn btn-success" onclick="confirmUnblockUser()"><i class="fas fa-unlock"></i> Unblock User</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit User Modal -->
+        <div id="editUserModal" class="modal-overlay" style="display: none;">
+            <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto; border-radius: 16px;">
+                <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px 24px;">
+                    <h3 style="margin: 0; color: white; display: flex; align-items: center; gap: 12px;"><i class="fas fa-edit" style="font-size: 24px;"></i><span>Edit User Account</span></h3>
+                    <button class="modal-close" onclick="closeEditUserModal()" style="background: rgba(255,255,255,0.2); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer;"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body" style="padding: 24px;">
+                    <input type="hidden" id="editUserId">
+                    <div style="display: flex; flex-direction: column; gap: 28px;">
+                        <!-- Personal -->
+                        <div style="background: #f9fafb; border-radius: 16px; padding: 20px; border: 1px solid #e5e7eb;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #e5e7eb;"><div style="width: 36px; height: 36px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center;"><i class="fas fa-user-circle" style="color: white; font-size: 18px;"></i></div><h4 style="margin: 0; color: #1f2937; font-size: 16px; font-weight: 600;">Personal Information</h4></div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                                <div class="form-group"><label style="display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px;">First Name <span style="color: #dc2626;">*</span></label><input type="text" id="editUserFname" class="form-control" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;"></div>
+                                <div class="form-group"><label style="display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px;">Middle Name</label><input type="text" id="editUserMname" class="form-control" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;"></div>
+                                <div class="form-group"><label style="display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px;">Last Name <span style="color: #dc2626;">*</span></label><input type="text" id="editUserLname" class="form-control" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;"></div>
+                                <div class="form-group"><label style="display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px;">Extension</label><input type="text" id="editUserExtension" class="form-control" placeholder="Jr., Sr., III" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;"></div>
+                                <div class="form-group"><label style="display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px;">Birthdate <span style="color: #dc2626;">*</span></label><input type="date" id="editUserBirthdate" class="form-control" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;"></div>
+                                <div class="form-group"><label style="display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px;">Sex <span style="color: #dc2626;">*</span></label><select id="editUserSex" class="form-control" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; background: white;"><option value="Male">Male</option><option value="Female">Female</option></select></div>
+                            </div>
+                        </div>
+                        <!-- Account -->
+                        <div style="background: #f9fafb; border-radius: 16px; padding: 20px; border: 1px solid #e5e7eb;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #e5e7eb;"><div style="width: 36px; height: 36px; background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center;"><i class="fas fa-key" style="color: white; font-size: 18px;"></i></div><h4 style="margin: 0; color: #1f2937; font-size: 16px; font-weight: 600;">Account Information</h4></div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                                <div class="form-group"><label style="display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px;">Username <span style="color: #dc2626;">*</span></label><input type="text" id="editUserUsername" class="form-control" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; background: #fef3c7;" readonly><small style="font-size: 11px; color: #6b7280; margin-top: 4px; display: block;">Username cannot be changed</small></div>
+                                <div class="form-group"><label style="display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px;">Email <span style="color: #dc2626;">*</span></label><input type="email" id="editUserEmail" class="form-control" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;"></div>
+                                <div class="form-group"><label style="display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px;">Role <span style="color: #dc2626;">*</span></label><select id="editUserRole" class="form-control" onchange="toggleEditUserPrivileges()" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; background: white;"><option value="user">👤 Regular User</option><option value="admin">🛡️ Administrator</option><option value="super admin">👑 Super Admin</option></select></div>
+                                <div class="form-group"><label style="display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px;">Status</label><select id="editUserStatus" class="form-control" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; background: white;"><option value="Active">✅ Active</option><option value="Pending">⏳ Pending</option><option value="Suspended">🚫 Suspended</option></select></div>
+                            </div>
+                        </div>
+                        <!-- Address -->
+                        <div style="background: #f9fafb; border-radius: 16px; padding: 20px; border: 1px solid #e5e7eb;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #e5e7eb;"><div style="width: 36px; height: 36px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center;"><i class="fas fa-map-marker-alt" style="color: white; font-size: 18px;"></i></div><h4 style="margin: 0; color: #1f2937; font-size: 16px; font-weight: 600;">Address Information</h4></div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                                <div class="form-group"><label style="display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px;">Purok/Street</label><input type="text" id="editUserPurok" class="form-control" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;"></div>
+                                <div class="form-group"><label style="display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px;">Barangay</label><input type="text" id="editUserBarangay" class="form-control" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;"></div>
+                                <div class="form-group"><label style="display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px;">City/Municipality</label><input type="text" id="editUserCity" class="form-control" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;"></div>
+                                <div class="form-group"><label style="display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px;">Province</label><input type="text" id="editUserProvince" class="form-control" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;"></div>
+                                <div class="form-group"><label style="display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px;">Country</label><input type="text" id="editUserCountry" class="form-control" value="Philippines" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;"></div>
+                                <div class="form-group"><label style="display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px;">Zip Code</label><input type="text" id="editUserZip" class="form-control" style="width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px;"></div>
+                            </div>
+                        </div>
+                        <!-- Privileges -->
+                        <div id="editUserPrivilegesSection" style="display: none; background: #f9fafb; border-radius: 16px; padding: 20px; border: 1px solid #e5e7eb;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #e5e7eb;"><div style="width: 36px; height: 36px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center;"><i class="fas fa-user-lock" style="color: white; font-size: 18px;"></i></div><h4 style="margin: 0; color: #1f2937; font-size: 16px; font-weight: 600;">Privileges & Permissions</h4></div>
+                            <div id="editUserSuperAdminNotice" style="display: none; background: #fffbeb; border-left: 4px solid #f59e0b; padding: 14px; border-radius: 8px; margin-bottom: 16px;"><i class="fas fa-crown" style="color: #f59e0b;"></i> <strong style="color: #92400e;">Super Admins have all privileges by default</strong></div>
+                            <div id="editUserPrivilegeContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px;"></div>
+                            <div style="margin-top: 16px; display: flex; gap: 10px; justify-content: flex-end;">
+                                <button type="button" onclick="userSelectAllPrivileges(true)" style="padding: 8px 16px; background: #e0e7ff; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; color: #4338ca;"><i class="fas fa-check-square"></i> Select All</button>
+                                <button type="button" onclick="userSelectAllPrivileges(false)" style="padding: 8px 16px; background: #f3f4f6; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; color: #374151;"><i class="fas fa-square"></i> Deselect All</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding: 16px 24px; background: #f9fafb; border-top: 1px solid #e5e7eb; display: flex; gap: 12px; justify-content: flex-end;">
+                    <button class="btn btn-secondary" onclick="closeEditUserModal()"><i class="fas fa-times"></i> Cancel</button>
+                    <button class="btn btn-primary" onclick="saveUserChanges()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;"><i class="fas fa-save"></i> Save Changes</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Account Modal -->
+        <div id="deleteAdminModal" class="modal-overlay" style="display: none;">
+            <div class="modal-content" style="max-width: 600px;">
+                <div class="modal-header"><h3><i class="fas fa-trash" style="color: #ef4444; margin-right: 10px;"></i>Delete Account</h3><button class="modal-close" onclick="closeDeleteAdminModal()"><i class="fas fa-times"></i></button></div>
+                <div class="modal-body">
+                    <input type="hidden" id="deleteAdminId">
+                    <div style="margin-bottom: 20px;"><label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Account to Delete:</label><p id="deleteAdminName" style="padding: 10px; background: #fef2f2; border-radius: 8px; margin: 0; font-weight: 500; color: #991b1b;"></p></div>
+                    <div style="margin-bottom: 20px;"><label for="deleteAdminReason" style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Reason for Deletion <span style="color: #dc2626;">*</span></label><textarea id="deleteAdminReason" rows="3" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: inherit; resize: vertical;" placeholder="Provide a detailed reason..."></textarea></div>
+                    <div style="margin-bottom: 20px;"><label for="deleteRequestedBy" style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Requesting Authority <span style="color: #dc2626;">*</span></label><input type="text" id="deleteRequestedBy" style="width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px;" placeholder="Name of person/department requesting deletion"></div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151;">Authorization Proof <span style="color: #dc2626;">*</span></label>
+                        <div id="deleteUploadArea" style="border: 2px dashed #e5e7eb; border-radius: 8px; padding: 30px; text-align: center; cursor: pointer;" onclick="document.getElementById('deleteProofFile').click()" ondrop="handleDeleteFileDrop(event)" ondragover="event.preventDefault()">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 32px; color: #9ca3af; margin-bottom: 10px;"></i>
+                            <p style="margin: 0; color: #6b7280;">Click or drag file here</p>
+                            <p style="font-size: 12px; color: #9ca3af; margin-top: 5px;">JPG, PNG, PDF, DOC, DOCX (max 5MB)</p>
+                        </div>
+                        <input type="file" id="deleteProofFile" style="display: none;" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" onchange="handleDeleteFileSelect(this)">
+                        <div id="deleteFilePreview" style="display: none; margin-top: 10px; padding: 10px; background: #f3f4f6; border-radius: 8px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i id="deleteFileIcon" class="fas fa-file fa-lg"></i>
+                                <div style="flex: 1;"><p id="deleteFileName" style="margin: 0; font-size: 13px; font-weight: 500;"></p><p id="deleteFileSize" style="margin: 0; font-size: 11px; color: #6b7280;"></p></div>
+                                <button type="button" onclick="clearDeleteFile()" style="background: none; border: none; cursor: pointer; color: #ef4444;"><i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button class="btn btn-secondary" onclick="closeDeleteAdminModal()">Cancel</button>
+                    <button class="btn btn-danger" onclick="confirmDeleteAdmin()"><i class="fas fa-trash"></i> Delete Account</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Admin Modal -->
+        <div id="viewAdminModal" class="modal-overlay" style="display: none;">
+            <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+                <div class="modal-header"><h3><i class="fas fa-user-shield" style="color: #4f46e5; margin-right: 10px;"></i>Admin Details</h3><button class="modal-close" onclick="closeViewAdminModal()"><i class="fas fa-times"></i></button></div>
+                <div class="modal-body">
+                    <div style="text-align: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 2px solid #e5e7eb;">
+                        <div id="viewAdminAvatar" style="width: 100px; height: 100px; border-radius: 50%; background: #4f46e5; color: white; display: inline-flex; align-items: center; justify-content: center; font-size: 40px; font-weight: 600; margin-bottom: 15px; border: 4px solid #e0e7ff;"></div>
+                        <h3 id="viewAdminFullName" style="margin: 0; color: #1f2937; font-size: 24px;"></h3>
+                        <p id="viewAdminRole" style="color: #6b7280; margin: 8px 0; font-size: 16px;"></p>
+                        <span id="viewAdminStatusBadge" class="status-badge"></span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">ID</label><p id="viewAdminId"></p></div>
+                        <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">First Name</label><p id="viewAdminFname"></p></div>
+                        <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Middle Name</label><p id="viewAdminMname"></p></div>
+                        <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Last Name</label><p id="viewAdminLname"></p></div>
+                        <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Extension</label><p id="viewAdminExtension"></p></div>
+                        <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Birthdate</label><p id="viewAdminBirthdate"></p></div>
+                        <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Username</label><p id="viewAdminUsername"></p></div>
+                        <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Email</label><p id="viewAdminEmail"></p></div>
+                        <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Sex</label><p id="viewAdminSex"></p></div>
+                        <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Account Type</label><p id="viewAdminAccountType"></p></div>
+                        <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Purok/Street</label><p id="viewAdminPurok"></p></div>
+                        <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Barangay</label><p id="viewAdminBarangay"></p></div>
+                        <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">City/Municipality</label><p id="viewAdminCity"></p></div>
+                        <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Province</label><p id="viewAdminProvince"></p></div>
+                        <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Country</label><p id="viewAdminCountry"></p></div>
+                        <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Zip Code</label><p id="viewAdminZip"></p></div>
+                        <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Created</label><p id="viewAdminCreated"></p></div>
+                        <div><label style="color: #6b7280; font-size: 11px; text-transform: uppercase; font-weight: 600;">Last Login</label><p id="viewAdminLastLogin"></p></div>
+                    </div>
+                    <div id="viewAdminPrivilegesSection" style="margin-top: 20px;"><label style="color: #6b7280; font-size: 12px; font-weight: 600;">Assigned Privileges</label><div id="viewAdminPrivileges" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 10px;"></div></div>
+                    <div id="viewAdminBlockInfo" style="display: none; margin-top: 20px; padding: 15px; background: #fee2e2; border-radius: 8px;"><label style="color: #dc2626; font-weight: 600;">Block Information</label><p><strong>Reason:</strong> <span id="viewAdminBlockReason"></span></p><p><strong>Blocked By:</strong> <span id="viewAdminBlockedBy"></span></p><p><strong>Blocked At:</strong> <span id="viewAdminBlockedAt"></span></p></div>
+                </div>
+                <div class="modal-footer"><button class="btn btn-secondary" onclick="closeViewAdminModal()">Close</button><button class="btn btn-primary" onclick="editViewedAdmin()">Edit Admin</button></div>
+            </div>
+        </div>
+
+        <!-- Edit Admin Modal -->
+        <div id="editAdminModal" class="modal-overlay" style="display: none;">
+            <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+                <div class="modal-header"><h3><i class="fas fa-edit" style="color: #4f46e5; margin-right: 10px;"></i>Edit Admin</h3><button class="modal-close" onclick="closeEditAdminModal()"><i class="fas fa-times"></i></button></div>
+                <div class="modal-body">
+                    <input type="hidden" id="editAdminId">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div><label>First Name</label><input type="text" id="editAdminFname" class="form-control"></div>
+                        <div><label>Middle Name</label><input type="text" id="editAdminMname" class="form-control"></div>
+                        <div><label>Last Name</label><input type="text" id="editAdminLname" class="form-control"></div>
+                        <div><label>Extension</label><input type="text" id="editAdminExtension" class="form-control"></div>
+                        <div><label>Birthdate</label><input type="date" id="editAdminBirthdate" class="form-control"></div>
+                        <div><label>Sex</label><select id="editAdminSex" class="form-control"><option value="Male">Male</option><option value="Female">Female</option></select></div>
+                        <div><label>Username</label><input type="text" id="editAdminUsername" class="form-control"></div>
+                        <div><label>Email</label><input type="email" id="editAdminEmail" class="form-control"></div>
+                        <div><label>Account Type</label><select id="editAdminAccountType" class="form-control" onchange="toggleEditPrivileges()"><option value="admin">Admin</option><option value="super admin">Super Admin</option></select></div>
+                        <div><label>Status</label><select id="editAdminStatus" class="form-control"><option value="Active">Active</option><option value="Pending">Pending</option><option value="Suspended">Suspended</option></select></div>
+                        <div><label>Password (leave blank to keep current)</label><div style="position: relative;"><input type="password" id="editAdminPassword" class="form-control" style="padding-right: 40px;"><i class="fas fa-eye" onclick="toggleEditPassword()" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i></div></div>
+                        <div><label>Purok/Street</label><input type="text" id="editAdminPurok" class="form-control"></div>
+                        <div><label>Barangay</label><input type="text" id="editAdminBarangay" class="form-control"></div>
+                        <div><label>City/Municipality</label><input type="text" id="editAdminCity" class="form-control"></div>
+                        <div><label>Province</label><input type="text" id="editAdminProvince" class="form-control"></div>
+                        <div><label>Country</label><input type="text" id="editAdminCountry" class="form-control" value="Philippines"></div>
+                        <div><label>Zip Code</label><input type="text" id="editAdminZip" class="form-control"></div>
+                    </div>
+                    <div id="editAdminPrivilegesSection" style="margin-top: 20px;">
+                        <div id="editSuperAdminNotice" style="display: none; background: #fffbeb; padding: 10px; border-radius: 8px; margin-bottom: 15px;"><i class="fas fa-crown"></i> Super Admin has all privileges by default.</div>
+                        <div id="editPrivilegeContainer"></div>
+                        <div id="editPrivilegeControls" style="margin-top: 10px;"><button type="button" class="btn-quick" onclick="editSelectAllPrivileges(true)">Select All</button><button type="button" class="btn-quick" onclick="editSelectAllPrivileges(false)">Deselect All</button></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn btn-secondary" onclick="closeEditAdminModal()">Cancel</button><button class="btn btn-primary" onclick="saveAdminEdit()">Save Changes</button></div>
+            </div>
+        </div>
+
+        <!-- Proof Image Modal -->
+        <div id="proofImageModal" class="modal-overlay" style="display: none;">
+            <div class="modal-content" style="max-width: 700px;">
+                <div class="modal-header"><h3><i class="fas fa-file-alt" style="color: #4f46e5; margin-right: 10px;"></i>Authorization Proof</h3><button class="modal-close" onclick="closeProofModal()"><i class="fas fa-times"></i></button></div>
+                <div class="modal-body">
+                    <div style="margin-bottom: 20px;">
+                        <table style="width:100%; font-size:14px;">
+                            <tr><td style="padding:5px 0;"><strong>Account ID:</strong></td><td id="proofAccountId">--</td></tr>
+                            <tr><td style="padding:5px 0;"><strong>Deleted By:</strong></td><td id="proofDeletedBy">--</td></tr>
+                            <tr><td style="padding:5px 0;"><strong>Requested By:</strong></td><td id="proofRequestedBy">--</td></tr>
+                            <tr><td style="padding:5px 0;"><strong>Deleted At:</strong></td><td id="proofDeletedAt">--</td></tr>
+                            <tr><td style="padding:5px 0;"><strong>Reason:</strong></td><td id="proofReason">--</td></tr>
+                        </table>
+                    </div>
+                    <div id="proofFileContainer" style="text-align: center; background: #f9fafb; border-radius: 8px; padding: 20px;"><p>Loading...</p></div>
+                </div>
+                <div class="modal-footer"><a id="proofDownloadLink" href="#" download class="btn btn-primary" style="margin-right: auto;"><i class="fas fa-download"></i> Download File</a><button class="btn btn-secondary" onclick="closeProofModal()">Close</button></div>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div id="toast" class="toast">
+            <i class="fas fa-check-circle"></i>
+            <span id="toastMessage">Operation successful</span>
+        </div>
+
+    </div><!-- /.main-content -->
+
+    <script src="../php/script.php?dir=js&file=validation.js" defer></script>
+    <script src="../php/script.php?dir=js&file=super_admin_dashboard.js" defer></script>
+    <script src="../php/script.php?dir=js&file=super_admin_delete_admin.js" defer></script>
+    <script src="../php/script.php?dir=js&file=super_admin_products.js" defer></script>
+    <script src="../php/script.php?dir=js&file=super_admin_orders.js" defer></script>
+    <script src="../php/script.php?dir=js&file=super_admin_categories.js" defer></script>
+    <script src="../php/script.php?dir=js&file=super_admin_reports.js" defer></script>
+    <script src="../php/script.php?dir=js&file=super_admin_new_modules.js" defer></script>
+
+</body>
+</html>

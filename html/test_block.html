@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Block</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        button { padding: 10px; margin: 5px; cursor: pointer; }
+        pre { background: #f4f4f4; padding: 10px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h2>Test Block Request</h2>
+    
+    <div>
+        <button onclick="checkSession()">1. Check Session</button>
+        <button onclick="testSimpleBlock()">2. Test Simple Block</button>
+        <button onclick="testRealBlock()">3. Test Real Block</button>
+        <button onclick="clearSession()">Clear SessionStorage</button>
+    </div>
+    
+    <h3>Result:</h3>
+    <pre id="result">Click a button to test</pre>
+
+    <script>
+    function checkSession() {
+        fetch('../php/check_real_session.php', {
+            credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+            document.getElementById('result').textContent = 'Error: ' + error;
+        });
+    }
+
+    function testSimpleBlock() {
+        fetch('../php/test_block_simple.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({ test: true })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+            document.getElementById('result').textContent = 'Error: ' + error;
+        });
+    }
+
+    function testRealBlock() {
+        const userId = prompt('Enter user ID to block:');
+        if (!userId) return;
+        
+        fetch('../php/block_user.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                user_id: userId,
+                username: 'test',
+                reason: 'Test block from debug page',
+                blocked_by: sessionStorage.getItem('username') || 'Test Admin',
+                force_logout: true
+            })
+        })
+        .then(response => response.text())
+        .then(text => {
+            document.getElementById('result').textContent = text;
+        })
+        .catch(error => {
+            document.getElementById('result').textContent = 'Error: ' + error;
+        });
+    }
+
+    function clearSession() {
+        sessionStorage.clear();
+        document.getElementById('result').textContent = 'SessionStorage cleared';
+    }
+    </script>
+</body>
+</html>

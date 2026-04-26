@@ -1,0 +1,196 @@
+/* OTP Verification Page Styles - Orange Theme */
+
+/* Recovery Icon - ORANGE Gradient */
+.recovery-header .recovery-icon {
+    background: linear-gradient(135deg, #f0a160, #e08c40) !important;
+}
+
+/* Email Display Box - Orange Tint */
+.email-display-box {
+    background: linear-gradient(135deg, #fff5eb, #ffe8d6);
+    border-left: 4px solid #f0a160;
+    text-align: center;
+    margin-bottom: 25px;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.email-label {
+    font-size: 14px;
+    color: #9c5a1f;
+    margin-bottom: 5px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* ORANGE ICON in email label */
+.email-label i {
+    color: #f0a160 !important;
+}
+
+.email-address {
+    font-size: 18px;
+    font-weight: bold;
+    color: #7a4518;
+    font-family: 'Courier New', monospace;
+}
+
+/* OTP Group Styling */
+.otp-group {
+    width: 100%;
+    margin-bottom: 25px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.otp-group .form-label {
+    text-align: left;
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    color: var(--recovery-text);
+    font-weight: 600;
+    font-size: 14px;
+    width: 100%;
+}
+
+/* ORANGE ICON in OTP label */
+.otp-group .form-label i {
+    margin-right: 8px;
+    color: #f0a160 !important;
+}
+
+/* OTP Input Styling */
+.otp-input {
+    width: 100%;
+    max-width: 280px;
+    padding: 14px 18px;
+    border: 2px solid #000000; /* Black border */
+    border-radius: 12px;
+    font-size: 24px;
+    letter-spacing: 12px;
+    font-weight: bold;
+    color: #f0a160;
+    text-align: center;
+    background: white;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    margin: 0 auto;
+    display: block;
+}
+
+.otp-input:focus {
+    outline: none;
+    border-color: #000000; /* Black border on focus */
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1); /* Black shadow on focus */
+    transform: translateY(-2px);
+}
+
+/* Timer Display */
+.timer-display {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+}
+
+/* ORANGE/YELLOW clock icon */
+.timer-display i {
+    color: #f59e0b !important;
+}
+
+#countdown {
+    font-weight: bold;
+    color: #dc2626;
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+}
+
+#countdown.expired {
+    color: #9ca3af;
+}
+
+/* Resend Section */
+.resend-section {
+    margin-top: 15px;
+    transition: opacity 0.3s ease;
+    width: 100%;
+}
+
+.resend-section.hidden {
+    display: none;
+}
+
+.resend-text {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.resend-link {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #f0a160;
+    font-size: 14px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.resend-link:hover {
+    background-color: rgba(240, 161, 96, 0.1);
+}
+
+.resend-link:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ORANGE icon in resend link */
+.resend-link i {
+    font-size: 12px;
+    color: #f0a160 !important;
+}
+
+/* Button Icons */
+.recovery-btn i {
+    margin-left: 8px;
+    color: white !important;
+}
+
+.recovery-btn-secondary i {
+    margin-right: 8px;
+    margin-left: 0;
+    color: #f0a160 !important;
+}
+
+/* Alert Box */
+#alertBox {
+    min-height: 20px;
+    width: 100%;
+}
+
+/* Loading Spinner Animation */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}

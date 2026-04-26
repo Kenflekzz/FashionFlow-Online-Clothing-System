@@ -1,0 +1,93 @@
+/* User ID Verification Page Styles - Exact match to inline version */
+
+/* Ensure form group centers its contents */
+.form-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; /* Stretch children to full width */
+}
+
+/* Form Label - left aligned, exact match to inline */
+.form-label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.form-label i {
+    margin-right: 8px;
+    color: var(--recovery-primary);
+}
+
+/* Form Input - full width centered, exact match to inline */
+.form-input {
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left; /* Text inside input is left-aligned */
+    border: 2px solid #000000; /* Black border */
+}
+
+/* Input Hint - centered under input, exact match to inline */
+.input-hint {
+    display: block;
+    margin-top: 6px;
+    color: #6b7280;
+    font-size: 12px;
+    text-align: center;
+}
+
+.input-hint i {
+    margin-right: 4px;
+    color: var(--recovery-primary);
+}
+
+/* Button Icons - exact match to inline */
+.recovery-btn i {
+    margin-left: 8px;
+}
+
+/* Recovery Links - exact match to inline */
+.recovery-links {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.recovery-link {
+    display: inline-flex;
+    align-items: center;
+    color: #000000; /* Black color instead of var(--recovery-primary) */
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.recovery-link i {
+    margin-right: 5px;
+    color: #000000; /* Black color for icon too */
+}
+
+/* Alert Container */
+#alertContainer {
+    min-height: 20px;
+}
+
+/* Alert styling - exact match to inline margin */
+#alertContainer .alert {
+    margin-bottom: 20px;
+}
+
+#alertContainer .alert i {
+    margin-right: 8px;
+}
+
+/* Loading Spinner */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
