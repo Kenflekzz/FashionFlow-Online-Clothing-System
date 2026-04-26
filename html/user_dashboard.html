@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account | FashionFlow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/user_dashboard.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">       
+            <!-- Account Menu Toggle (Hamburger) - MOVED TO LEFT -->
+            <button class="account-menu-toggle" onclick="toggleAccountMenu()" aria-label="Open Account Menu">
+                <i class="fas fa-bars"></i>
+                <span class="toggle-text">Menu</span>
+            </button>
+            
+            <a href="#" class="logo">
+                <img src="../image/FashionFLow-.png" alt="FashionFlow Logo">
+                <span class="logo-text">Fashion Flow</span>
+            </a>
+            
+            <!-- Main nav - ALWAYS VISIBLE -->
+            <nav class="nav-menu main-nav">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-th-large"></i>
+                    <span>Shop</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-heart"></i>
+                    <span>Wishlist</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Cart</span>
+                    <span class="cart-badge">3</span>
+                </a>
+                <div class="user-avatar" id="userAvatar">K</div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Account Sidebar / Mobile Drawer -->
+    <aside class="account-sidebar" id="accountSidebar">
+        <div class="sidebar-overlay" onclick="toggleAccountMenu()"></div>
+        <div class="sidebar-card">
+            <div class="sidebar-header">
+                <h3>My Account</h3>
+                <button class="close-sidebar" onclick="toggleAccountMenu()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link active" onclick="showUserDashboard(); toggleAccountMenu(); return false;">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <i class="fas fa-shopping-bag"></i>
+                        My Orders
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link" onclick="showLoginHistory(); toggleAccountMenu(); return false;">
+                        <i class="fas fa-history"></i>
+                        Login History
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Addresses
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <i class="fas fa-credit-card"></i>
+                        Payment Methods
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link" onclick="showProfileSettings(); toggleAccountMenu(); return false;">
+                        <i class="fas fa-user"></i>
+                        Profile Settings
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <i class="fas fa-bell"></i>
+                        Notifications
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" id="logoutBtn" onclick="logout(); return false;">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <div class="welcome-text">
+                <h1>Welcome back, <span id="userName">User</span>! 👋</h1>
+                <p>Here's what's happening with your account today.</p>
+            </div>
+            <div class="welcome-stats">
+                <div class="welcome-stat">
+                    <h3>12</h3>
+                    <p>Orders</p>
+                </div>
+                <div class="welcome-stat">
+                    <h3>5</h3>
+                    <p>Wishlist</p>
+                </div>
+                <div class="welcome-stat">
+                    <h3>3</h3>
+                    <p>Pending</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Area - Dashboard -->
+        <div class="content-area" id="userDashboardContent">
+            <!-- Recent Orders -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-box"></i>Recent Orders</h2>
+                    <button class="btn-outline">View All Orders</button>
+                </div>
+                <div class="card-body">
+                    <div class="order-card">
+                        <div class="order-info">
+                            <h4>Order #FF-2024-001</h4>
+                            <p>Placed on Jan 15, 2024</p>
+                            <p>3 items • Standard Shipping</p>
+                            <span class="order-status status-delivered">Delivered</span>
+                        </div>
+                        <div class="order-total">
+                            <h3>$156.00</h3>
+                            <a href="#">View Details →</a>
+                        </div>
+                    </div>
+                    <div class="order-card">
+                        <div class="order-info">
+                            <h4>Order #FF-2024-002</h4>
+                            <p>Placed on Jan 18, 2024</p>
+                            <p>2 items • Express Shipping</p>
+                            <span class="order-status status-shipped">Shipped</span>
+                        </div>
+                        <div class="order-total">
+                            <h3>$89.50</h3>
+                            <a href="#">Track Order →</a>
+                        </div>
+                    </div>
+                    <div class="order-card">
+                        <div class="order-info">
+                            <h4>Order #FF-2024-003</h4>
+                            <p>Placed on Jan 20, 2024</p>
+                            <p>1 item • Standard Shipping</p>
+                            <span class="order-status status-processing">Processing</span>
+                        </div>
+                        <div class="order-total">
+                            <h3>$45.00</h3>
+                            <a href="#">View Details →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wishlist Preview -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-heart"></i>Your Wishlist</h2>
+                    <button class="btn-outline">View All</button>
+                </div>
+                <div class="card-body">
+                    <div class="wishlist-grid">
+                        <div class="wishlist-item">
+                            <button class="remove-btn"><i class="fas fa-times"></i></button>
+                            <div class="wishlist-img"><i class="fas fa-tshirt"></i></div>
+                            <div class="wishlist-info">
+                                <h4>Summer Floral Dress</h4>
+                                <p>$59.99</p>
+                                <button class="btn-add-cart">Add to Cart</button>
+                            </div>
+                        </div>
+                        <div class="wishlist-item">
+                            <button class="remove-btn"><i class="fas fa-times"></i></button>
+                            <div class="wishlist-img"><i class="fas fa-shoe-prints"></i></div>
+                            <div class="wishlist-info">
+                                <h4>Classic White Sneakers</h4>
+                                <p>$79.99</p>
+                                <button class="btn-add-cart">Add to Cart</button>
+                            </div>
+                        </div>
+                        <div class="wishlist-item">
+                            <button class="remove-btn"><i class="fas fa-times"></i></button>
+                            <div class="wishlist-img"><i class="fas fa-shopping-bag"></i></div>
+                            <div class="wishlist-info">
+                                <h4>Leather Handbag</h4>
+                                <p>$129.99</p>
+                                <button class="btn-add-cart">Add to Cart</button>
+                            </div>
+                        </div>
+                        <div class="wishlist-item">
+                            <button class="remove-btn"><i class="fas fa-times"></i></button>
+                            <div class="wishlist-img"><i class="fas fa-glasses"></i></div>
+                            <div class="wishlist-info">
+                                <h4>Sunglasses</h4>
+                                <p>$45.00</p>
+                                <button class="btn-add-cart">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Area - Login History -->
+        <div class="content-area" id="loginHistoryContent" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-history"></i>Login History</h2>
+                    <button class="btn-outline" onclick="refreshUserLogs()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <div class="card-body">
+                    <p class="login-history-note">
+                        View your recent login activity. If you notice any suspicious activity, please change your password immediately.
+                    </p>
+                    
+                    <div class="pagination-controls-top">
+                        <label for="entriesPerPage">Show</label>
+                        <select id="entriesPerPage" onchange="changeEntriesPerPage()">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        <span>entries per page</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Device</th>
+                                    <th>IP Address</th>
+                                    <th>Login Time</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userLogsTableBody">
+                                <tr>
+                                    <td colspan="4" class="loading-cell">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <p>Loading login history...</p>
+                                    </div>
+                                </div>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pagination-container">
+                        <div class="pagination-info">
+                            Showing <span id="startEntry">0</span> to <span id="endEntry">0</span> of <span id="totalEntries">0</span> entries
+                        </div>
+                        <div class="pagination-buttons" id="paginationButtons"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Area - Profile Settings -->
+        <div class="content-area" id="profileSettingsContent" style="display: none;">
+            <div class="profile-settings-container">
+                <div id="profileAlertContainer"></div>
+
+                <!-- Profile Picture Section -->
+                <div class="settings-section">
+                    <h3><i class="fas fa-camera"></i> Profile Picture</h3>
+                    <div class="profile-header">
+                        <div class="profile-avatar" onclick="document.getElementById('profilePicInput').click()">
+                            <img id="profileAvatarImg" src="https://ui-avatars.com/api/?name=User&background=7c3e2e&color=fff&size=120" alt="Profile Picture">
+                            <div class="avatar-overlay">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                        </div>
+                        <input type="file" id="profilePicInput" style="display: none;" accept="image/jpeg,image/png,image/jpg" onchange="uploadProfilePicture(this)">
+                        <p style="text-align: center; color: #6b7280; font-size: 12px; margin-top: 10px;">Click the camera icon to change your profile picture</p>
+                    </div>
+                </div>
+
+                <!-- Personal Information Section -->
+                <div class="settings-section">
+                    <h3><i class="fas fa-user"></i> Personal Information</h3>
+                    <div class="profile-name-inputs">
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" id="profileFirstName" placeholder="Enter first name">
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" id="profileLastName" placeholder="Enter last name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="profileEmail" placeholder="Enter email address">
+                    </div>
+                    <button class="btn-save" onclick="updatePersonalInfo()">Update Information</button>
+                </div>
+
+                <!-- Security Questions Section -->
+                <div class="settings-section">
+                    <h3><i class="fas fa-shield-alt"></i> Security Questions</h3>
+                    <p style="color: #6b7280; font-size: 13px; margin-bottom: 20px;">These questions help verify your identity if you forget your password.</p>
+                    
+                    <div class="security-questions-grid">
+                        <div class="form-group">
+                            <label>Security Question 1</label>
+                            <select id="secQuestion1">
+                                <option value="">Select a question</option>
+                                <option value="What was your childhood nickname?">What was your childhood nickname?</option>
+                                <option value="What is the name of your first pet?">What is the name of your first pet?</option>
+                                <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+                                <option value="What was the name of your first school?">What was the name of your first school?</option>
+                                <option value="What is your favorite movie?">What is your favorite movie?</option>
+                                <option value="In what city were you born?">In what city were you born?</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Answer 1</label>
+                            <div class="password-container">
+                                <input type="password" id="secAnswer1" placeholder="Enter your answer">
+                                <i class="fas fa-eye" onclick="togglePasswordVisibility('secAnswer1', this)"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Security Question 2</label>
+                            <select id="secQuestion2">
+                                <option value="">Select a question</option>
+                                <option value="What is your favorite food?">What is your favorite food?</option>
+                                <option value="What was the make of your first car?">What was the make of your first car?</option>
+                                <option value="What is your father's middle name?">What is your father's middle name?</option>
+                                <option value="What is the name of your favorite teacher?">What is the name of your favorite teacher?</option>
+                                <option value="What was your first job?">What was your first job?</option>
+                                <option value="What is the name of your best friend?">What is the name of your best friend?</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Answer 2</label>
+                            <div class="password-container">
+                                <input type="password" id="secAnswer2" placeholder="Enter your answer">
+                                <i class="fas fa-eye" onclick="togglePasswordVisibility('secAnswer2', this)"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Security Question 3</label>
+                            <select id="secQuestion3">
+                                <option value="">Select a question</option>
+                                <option value="What is your favorite color?">What is your favorite color?</option>
+                                <option value="What street did you grow up on?">What street did you grow up on?</option>
+                                <option value="What is your favorite sports team?">What is your favorite sports team?</option>
+                                <option value="What was your high school mascot?">What was your high school mascot?</option>
+                                <option value="What is your favorite book?">What is your favorite book?</option>
+                                <option value="What is your oldest sibling's middle name?">What is your oldest sibling's middle name?</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Answer 3</label>
+                            <div class="password-container">
+                                <input type="password" id="secAnswer3" placeholder="Enter your answer">
+                                <i class="fas fa-eye" onclick="togglePasswordVisibility('secAnswer3', this)"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-save" onclick="updateSecurityQuestions()">Save Security Questions</button>
+                </div>
+
+                <!-- Change Password Section -->
+                <div class="settings-section">
+                    <h3><i class="fas fa-key"></i> Change Password</h3>
+                    <div class="form-group">
+                        <label>Current Password</label>
+                        <div class="password-container">
+                            <input type="password" id="currentPassword" placeholder="Enter current password">
+                            <i class="fas fa-eye" onclick="togglePasswordVisibility('currentPassword', this)"></i>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>New Password</label>
+                        <div class="password-container">
+                            <input type="password" id="newPassword" placeholder="Enter new password">
+                            <i class="fas fa-eye" onclick="togglePasswordVisibility('newPassword', this)"></i>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm New Password</label>
+                        <div class="password-container">
+                            <input type="password" id="confirmNewPassword" placeholder="Confirm new password">
+                            <i class="fas fa-eye" onclick="togglePasswordVisibility('confirmNewPassword', this)"></i>
+                        </div>
+                    </div>
+                    <button class="btn-save" onclick="changePassword()">Change Password</button>
+                </div>
+
+                <!-- Forgot Password Link -->
+                <div class="settings-section" style="text-align: center;">
+                    <a href="#" class="forgot-password-link" onclick="showForgotPasswordModal(); return false;">
+                        <i class="fas fa-question-circle"></i> Forgot Password? Verify with Security Questions
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgotPasswordModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Forgot Password</h3>
+                <button class="close-modal" onclick="closeForgotPasswordModal()">&times;</button>
+            </div>
+            <div id="forgotPasswordAlert"></div>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="forgotUsername" placeholder="Enter your username">
+            </div>
+            <div class="form-group">
+                <label>Security Question 1</label>
+                <p id="displaySecQuestion1" style="background: #f3f4f6; padding: 10px; border-radius: 8px;">Select question first</p>
+                <input type="text" id="forgotAnswer1" placeholder="Your answer" style="margin-top: 10px;">
+            </div>
+            <div class="form-group">
+                <label>Security Question 2</label>
+                <p id="displaySecQuestion2" style="background: #f3f4f6; padding: 10px; border-radius: 8px;">Select question first</p>
+                <input type="text" id="forgotAnswer2" placeholder="Your answer" style="margin-top: 10px;">
+            </div>
+            <div class="form-group">
+                <label>Security Question 3</label>
+                <p id="displaySecQuestion3" style="background: #f3f4f6; padding: 10px; border-radius: 8px;">Select question first</p>
+                <input type="text" id="forgotAnswer3" placeholder="Your answer" style="margin-top: 10px;">
+            </div>
+            <button class="btn-save" onclick="verifySecurityAnswers()">Verify & Reset Password</button>
+        </div>
+    </div>
+
+    <!-- Reset Password Modal -->
+    <div id="resetPasswordModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Reset Password</h3>
+                <button class="close-modal" onclick="closeResetPasswordModal()">&times;</button>
+            </div>
+            <div id="resetPasswordAlert"></div>
+            <div class="form-group">
+                <label>New Password</label>
+                <div class="password-container">
+                    <input type="password" id="resetNewPassword" placeholder="Enter new password">
+                    <i class="fas fa-eye" onclick="togglePasswordVisibility('resetNewPassword', this)"></i>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Confirm New Password</label>
+                <div class="password-container">
+                    <input type="password" id="resetConfirmPassword" placeholder="Confirm new password">
+                    <i class="fas fa-eye" onclick="togglePasswordVisibility('resetConfirmPassword', this)"></i>
+                </div>
+            </div>
+            <button class="btn-save" onclick="confirmResetPassword()">Reset Password</button>
+        </div>
+    </div>
+
+    <script src="../js/user_dashboard.js"></script>
+</body>
+</html>

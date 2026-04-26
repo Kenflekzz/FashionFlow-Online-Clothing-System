@@ -1,0 +1,476 @@
+/* Password Recovery Specific Styles - Orange/Gold Theme */
+:root {
+    /* Base colors from background */
+    --bg-primary: #2d1f16;      /* Dark brown from background */
+    --bg-secondary: #4a3428;    /* Medium brown */
+    --bg-accent: #1a120e;       /* Very dark brown */
+    
+    /* Theme colors - Using #f0a160 as primary */
+    --recovery-primary: #f0a160;      /* Warm orange/gold */
+    --recovery-secondary: #f4b870;    /* Light gold */
+    --recovery-accent: #e08c40;       /* Darker orange */
+    --recovery-card: rgba(255, 253, 250, 0.95);
+    --recovery-text: #2d1f16;         /* Dark brown text */
+    --recovery-text-light: #6b5a4a;   /* Light brown for secondary text */
+    --recovery-border: rgba(240, 161, 96, 0.3);  /* Orange tint */
+    --recovery-shadow: rgba(45, 31, 22, 0.4);
+}
+
+/* Body with Background Image and Blur */
+.recovery-body {
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Background Image Layer with Blur */
+.recovery-body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../image/360_F_671509713_h0abOwrUCBpJTdiYofw9JhllrI0qZuoN.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    filter: blur(10px) brightness(0.7);
+    -webkit-filter: blur(10px) brightness(0.7);
+    z-index: -2;
+    transform: scale(1.15);
+}
+
+/* Gradient Overlay - Warm Brown Tones */
+.recovery-body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        135deg,
+        rgba(45, 31, 22, 0.75) 0%,
+        rgba(74, 52, 40, 0.65) 50%,
+        rgba(26, 18, 14, 0.55) 100%
+    );
+    z-index: -1;
+}
+
+/* Glassmorphism Card */
+.recovery-container {
+    max-width: 600px;
+    width: 90%;
+    margin: 100px auto 40px;
+    background: var(--recovery-card);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 24px;
+    box-shadow: 
+        0 25px 50px -12px var(--recovery-shadow),
+        0 0 0 1px rgba(240, 161, 96, 0.1) inset;
+    padding: 40px;
+    animation: slideUp 0.6s ease-out;
+    border: 1px solid rgba(240, 161, 96, 0.2);
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.recovery-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Icon with Orange/Gold Gradient */
+.recovery-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--recovery-primary), var(--recovery-accent));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 32px;
+    color: white;
+    box-shadow: 
+        0 10px 25px rgba(240, 161, 96, 0.4),
+        0 0 0 4px rgba(255, 255, 255, 0.1) inset;
+}
+
+.recovery-title {
+    font-size: 28px;
+    color: var(--recovery-text);
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.recovery-subtitle {
+    color: var(--recovery-text-light);
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* Progress Indicator */
+.progress-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.progress-steps::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #e5e7eb 0%, var(--recovery-border) 100%);
+    z-index: 0;
+    border-radius: 2px;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1;
+    position: relative;
+}
+
+.step-number {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #9ca3af;
+    transition: all 0.3s ease;
+    margin-bottom: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.step.active .step-number {
+    background: linear-gradient(135deg, var(--recovery-primary), var(--recovery-accent));
+    border-color: var(--recovery-primary);
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(240, 161, 96, 0.4);
+}
+
+.step.completed .step-number {
+    background: #10b981;
+    border-color: #10b981;
+    color: white;
+}
+
+.step-label {
+    font-size: 12px;
+    color: var(--recovery-text-light);
+    font-weight: 500;
+    text-align: center;
+}
+
+.step.active .step-label {
+    color: var(--recovery-primary);
+    font-weight: 600;
+}
+
+/* Form Styles */
+.recovery-form {
+    margin-top: 30px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--recovery-text);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--recovery-text);
+    box-sizing: border-box;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--recovery-primary);
+    box-shadow: 0 0 0 4px rgba(240, 161, 96, 0.15);
+    transform: translateY(-2px);
+    background: white;
+}
+
+.form-input::placeholder {
+    color: #9ca3af;
+}
+
+.input-hint {
+    display: block;
+    margin-top: 6px;
+    font-size: 13px;
+    color: var(--recovery-text-light);
+}
+
+/* Security Questions */
+.question-box {
+    background: linear-gradient(135deg, rgba(255, 248, 240, 0.9), rgba(254, 245, 235, 0.9));
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--recovery-primary);
+    backdrop-filter: blur(10px);
+}
+
+.question-text {
+    font-weight: 600;
+    color: var(--recovery-text);
+    font-size: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.question-number {
+    background: linear-gradient(135deg, var(--recovery-primary), var(--recovery-accent));
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Password Requirements */
+.password-requirements {
+    background: rgba(255, 248, 240, 0.9);
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 13px;
+    border: 1px solid rgba(240, 161, 96, 0.15);
+}
+
+.requirement {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    color: var(--recovery-text-light);
+}
+
+.requirement.met {
+    color: var(--recovery-primary);
+}
+
+.requirement.met i {
+    color: var(--recovery-primary);
+}
+
+/* Buttons with Orange/Gold Gradient */
+.recovery-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--recovery-primary), var(--recovery-accent));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(240, 161, 96, 0.35);
+}
+
+.recovery-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(240, 161, 96, 0.45);
+}
+
+.recovery-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.recovery-btn-secondary {
+    background: rgba(255, 255, 255, 0.85);
+    border: 2px solid var(--recovery-border);
+    color: var(--recovery-text);
+    margin-top: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.recovery-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: var(--recovery-primary);
+}
+
+/* Links */
+.recovery-links {
+    text-align: center;
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 1px solid rgba(240, 161, 96, 0.2);
+}
+
+.recovery-link {
+    color: var(--recovery-primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.recovery-link:hover {
+    color: var(--recovery-accent);
+    text-decoration: underline;
+}
+
+/* Alert Messages */
+.alert {
+    padding: 16px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    backdrop-filter: blur(10px);
+}
+
+.alert-error {
+    background: rgba(254, 242, 242, 0.9);
+    border: 1px solid rgba(252, 165, 165, 0.5);
+    color: #dc2626;
+}
+
+.alert-success {
+    background: rgba(240, 253, 244, 0.9);
+    border: 1px solid rgba(167, 243, 208, 0.5);
+    color: #059669;
+}
+
+/* Loading Spinner */
+.spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .recovery-container {
+        margin: 80px 20px 20px;
+        padding: 30px 20px;
+    }
+    
+    .step-label {
+        display: none;
+    }
+    
+    .recovery-title {
+        font-size: 24px;
+    }
+    
+    .recovery-body::before {
+        transform: scale(1.25);
+    }
+}
+
+/* Email / User Info Display Box - shared across all recovery steps */
+.email-display-box {
+    background: rgba(255, 248, 240, 0.9);
+    border: 1px solid rgba(240, 161, 96, 0.3);
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.email-label {
+    font-size: 13px;
+    color: var(--recovery-text-light);
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.email-label i {
+    color: var(--recovery-primary);
+}
+
+.email-address {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--recovery-text);
+    word-break: break-all;
+}
+
+.user-info-box {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 4px 0;
+}
+
+.user-info-box span {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--recovery-text);
+}
+
+.user-info-box .info-icon {
+    color: var(--recovery-primary) !important;
+    font-size: 12px;
+    margin-right: 4px;
+}

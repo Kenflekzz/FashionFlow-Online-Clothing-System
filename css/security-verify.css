@@ -1,0 +1,104 @@
+/* Security Verification Page Styles - Orange Theme */
+
+/* Recovery Icon - ORANGE Gradient (matches theme) */
+.recovery-header .recovery-icon {
+    background: linear-gradient(135deg, #f0a160, #e08c40) !important;
+}
+
+/* Form Group - explicit full width and centering */
+.security-form .form-group,
+.recovery-form .form-group {
+    width: 100% !important;
+    margin-bottom: 25px;
+    display: block;
+}
+
+/* Form Label Styling */
+.security-form .form-label,
+.recovery-form .form-label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    color: var(--recovery-text);
+    font-weight: 600;
+    font-size: 14px;
+    width: 100%;
+    text-align: left;
+}
+
+/* ORANGE ICONS with !important */
+.form-label i {
+    color: #f0a160 !important;
+    font-size: 16px;
+    margin-right: 8px;
+}
+
+/* Form Input - forced full width and centering with BLACK BORDER */
+.security-form .form-input,
+.recovery-form .form-input,
+#securityForm .form-input {
+    width: 100% !important;
+    max-width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #000000; /* Black border */
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background: white;
+    color: var(--recovery-text);
+    box-sizing: border-box;
+    display: block;
+    margin: 0 auto;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #000000; /* Black border on focus */
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1); /* Black shadow on focus */
+    transform: translateY(-2px);
+}
+
+.form-input::placeholder {
+    color: #9ca3af;
+}
+
+.loading-text {
+    color: #6b7280;
+}
+
+/* Alert Box */
+#alertBox {
+    min-height: 20px;
+    width: 100%;
+}
+
+/* Button Icon Spacing */
+.recovery-btn i {
+    margin-left: 8px;
+    color: white !important;
+}
+
+.recovery-btn-secondary {
+    margin-top: 10px;
+}
+
+.recovery-btn-secondary i {
+    margin-right: 8px;
+    margin-left: 0;
+    color: #f0a160 !important;
+}
+
+/* Loading State for Questions */
+.form-label.loading .loading-text {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+

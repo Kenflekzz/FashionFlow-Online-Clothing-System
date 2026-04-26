@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Verification - Step 3 | FashionFlow</title>
+    <link rel="stylesheet" href="../css/recovery.css">
+    <link rel="stylesheet" href="../css/security-verify.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="recovery-body">
+
+    <div class="recovery-container">
+
+        <!-- Progress Steps -->
+        <div class="progress-steps">
+            <div class="step completed">
+                <div class="step-number"><i class="fas fa-check"></i></div>
+                <div class="step-label">Find Account</div>
+            </div>
+            <div class="step completed">
+                <div class="step-number"><i class="fas fa-check"></i></div>
+                <div class="step-label">Verify Email</div>
+            </div>
+            <div class="step active">
+                <div class="step-number">3</div>
+                <div class="step-label">Security</div>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-label">Reset</div>
+            </div>
+        </div>
+
+        <!-- User Info Display Box -->
+        <div class="email-display-box">
+            <div class="email-label">
+                <i class="fas fa-id-card"></i>
+                Account:
+            </div>
+            <div class="user-info-box">
+                <span>
+                    <i class="fas fa-hashtag info-icon"></i>
+                    <span id="displayUserId">Loading...</span>
+                </span>
+                <span>
+                    <i class="fas fa-user info-icon"></i>
+                    <span id="displayUsername">Loading...</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="recovery-header">
+            <div class="recovery-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h1 class="recovery-title">Security Check</h1>
+            <p class="recovery-subtitle">Answer your security questions to verify your identity.</p>
+        </div>
+
+        <!-- Form -->
+        <form class="recovery-form" id="securityForm">
+            <div id="alertBox"></div>
+
+            <!-- Question 1 -->
+            <div class="form-group">
+                <label class="form-label" for="answer1" id="label1">
+                    <i class="fas fa-question-circle"></i>
+                    <span class="loading-text">Loading...</span>
+                </label>
+                <input type="password" id="answer1" name="answer1" class="form-input" placeholder="Your answer" required autocomplete="off">
+            </div>
+
+            <!-- Question 2 -->
+            <div class="form-group">
+                <label class="form-label" for="answer2" id="label2">
+                    <i class="fas fa-question-circle"></i>
+                    <span class="loading-text">Loading...</span>
+                </label>
+                <input type="password" id="answer2" name="answer2" class="form-input" placeholder="Your answer" required autocomplete="off">
+            </div>
+
+            <!-- Question 3 -->
+            <div class="form-group">
+                <label class="form-label" for="answer3" id="label3">
+                    <i class="fas fa-question-circle"></i>
+                    <span class="loading-text">Loading...</span>
+                </label>
+                <input type="password" id="answer3" name="answer3" class="form-input" placeholder="Your answer" required autocomplete="off">
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="recovery-btn" id="verifyBtn">
+                <span id="btnText">Verify Answers</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+
+            <!-- Back Button -->
+            <button type="button" class="recovery-btn recovery-btn-secondary" onclick="window.location.href='otp-verification.html'">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back</span>
+            </button>
+        </form>
+
+    </div>
+
+    <script src="../php/script.php?dir=js&file=security-verify.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <link rel="stylesheet" href="../php/script.php?dir=css&file=sign-in.css">
+    <link rel="stylesheet" href="../php/script.php?dir=css&file=all.min.css">
+    <script src="../php/script.php?dir=js&file=loginvalidation.js" defer></script>
+    <script src="../php/script.php?dir=js&file=eyeicon.js" defer></script>
+    <script src="../php/script.php?dir=js&file=forgotpassword_cooldown.js" defer></script>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <img src="../image/FashionFLow-.png" alt="FashionFlow Logo">
+            <h1>Online Clothing System</h1>
+        </div>
+        <div class="navlogin">
+            <nav>
+                <ul style="list-style-type: none; display: flex; gap: 15px; padding: 0;">
+                    <li style="display: flex; align-items: center;">
+                        <a href="../html/Home.html" style="text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                            <i class="fa-solid fa-house" style="color: lightgreen;" title="Home"></i>
+                            <span style="color: white; font-size: 20px;">Home</span>
+                        </a>
+                    </li>
+                    <li style="display: flex; align-items: center;">
+                        <a href="../html/sign-up.html" style="text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                            <i class="fa-solid fa-user" style="color: orange;" title="Register Account"></i>
+                            <span style="color: white; font-size: 20px;">Register</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <form id="loginForm" method="post" action="../php/loginvalidation.php">
+            <h1>Log In</h1>
+            <hr>
+            
+            <!-- Username Field -->
+            <div class="form-field">
+                <label for="Username" style="color:white; font-size: 20px;">Username:</label>
+                <input id="Username" name="Username" type="text" required />
+            </div>
+        
+            <!-- Password Field -->
+            <div class="form-field">
+                <label for="Password" style="color:white; font-size: 20px;">Password:</label>
+                <div class="password-container">
+                    <input id="Password" name="Password" type="password" required />
+                    <i class="fas fa-eye" onclick="togglePassword('Password', this)" style="cursor: pointer;"></i>
+                </div>
+            </div>
+        
+            <button type="submit" style="margin-bottom:10px">Log In</button>
+            <hr>
+        
+            <p id="forgotPasswordDiv" style="margin-left:10px;">
+                <a href="#" id="forgotPasswordLink" onclick="handleForgotPassword(event)">Forgot Password?</a>
+            </p>
+            
+            <p id="timerDisplay" class="countdown-timer" style="display:none; color: #ff9800; text-align: center; margin-top: 10px;"></p>
+        </form>
+    </div>
+    <div class="text">
+        <img src="../image/FashionFLow-.png" alt="FashionFlow Logo">
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <p>&copy; 2024 FashionFlow. All rights reserved.</p> 
+        </div>
+    </footer>
+
+</body>
+</html>

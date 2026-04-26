@@ -1,0 +1,306 @@
+/* =========================
+   GLOBAL RESET
+========================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Allow scrolling on mobile */
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+/* =========================
+   BODY
+========================= */
+body {
+    background-image: url('../image/360_F_671509713_h0abOwrUCBpJTdiYofw9JhllrI0qZuoN.webp');
+    background-repeat: no-repeat;
+    background-size: cover;
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+}
+
+/* =========================
+   HEADER
+========================= */
+header {
+    padding: 10px 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+}
+
+.header-container {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+}
+
+.header-container img {
+    width: 70px;
+    border-radius: 50px;
+    margin-right: 10px;
+}
+
+header h1 {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 2.5rem;
+    color: #fff;
+}
+
+/* =========================
+   NAVIGATION
+========================= */
+.navlogin {
+    margin-left: auto;
+    padding-right: 55px;
+    margin-top: 11px;
+}
+
+.navlogin nav ul {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+    padding-right: 10px;
+}
+
+.navlogin nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.5rem;
+}
+
+.navlogin nav ul li a:hover {
+    text-decoration: underline;
+}
+
+/* =========================
+   CONTAINER / FORM
+========================= */
+.container {
+    background-image: url('../image/360_F_671509713_h0abOwrUCBpJTdiYofw9JhllrI0qZuoN.webp');
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 10px;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
+                0 10px 10px rgba(0, 0, 0, 0.22);
+    padding: 40px;
+    max-width: 400px;
+    width: 90%;
+    margin: 120px auto 0;
+}
+
+/* =========================
+   FORM ELEMENTS
+========================= */
+form h1 {
+    color: #fff;
+    font-family: 'Courier New', Courier, monospace;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+label {
+    color: white;
+    font-size: 20px;
+}
+
+form input {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 8px 0;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: #fff;
+    color: #333;
+}
+
+.password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-container input {
+    padding-right: 40px;
+}
+
+.password-container i {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #888;
+}
+
+/* =========================
+   BUTTON
+========================= */
+button {
+    width: 100%;
+    border-radius: 20px;
+    border: 1px solid #f0a160;
+    background-color: #f0a160;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 12px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+/* =========================
+   TEXT / LINKS
+========================= */
+p {
+    margin-top: 10px;
+    text-align: center;
+}
+
+p a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* =========================
+   IMAGE SECTION
+========================= */
+.text {
+    margin: 0 40px;
+}
+
+.text img {
+    width: 700px;
+    height: 600px;
+    border-radius: 400px;
+    object-fit: cover;
+}
+
+/* =========================
+   TIMER
+========================= */
+.countdown-timer {
+    color: #fff;
+    font-weight: bold;
+    font-size: 15px;
+    margin-top: 15px;
+    text-align: center;
+}
+
+/* =========================
+   FOOTER
+========================= */
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 15px 0;
+    text-align: center;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+}
+
+.footer-container {
+    max-width: 1200px;
+    width: 100%;
+    padding: 0 20px;
+    margin: auto;
+}
+
+/* =========================
+   RESPONSIVE: TABLET
+========================= */
+@media (max-width: 1024px) {
+    .text img {
+        width: 500px;
+        height: auto;
+    }
+}
+
+/* =========================
+   RESPONSIVE: MOBILE (APP-STYLE)
+========================= */
+@media (max-width: 768px) {
+
+    body {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 20px;
+    }
+
+    /* Header becomes logo-only */
+    header {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .header-container {
+        flex-direction: column;
+        align-items: center;
+        padding: 0;
+    }
+
+    .header-container img {
+        width: 90px;
+        margin: 0 auto 10px;
+    }
+
+    /* Hide desktop title & nav */
+    header h1,
+    .navlogin {
+        display: none;
+    }
+
+    /* Form card */
+    .container {
+        margin: 0;
+        width: 100%;
+        max-width: 360px;
+        padding: 30px 20px;
+    }
+
+    /* Hide side image */
+    .text {
+        display: none;
+    }
+}
+
+/* =========================
+   RESPONSIVE: SMALL PHONES
+========================= */
+@media (max-width: 480px) {
+
+    .header-container img {
+        width: 80px;
+    }
+
+    form h1 {
+        font-size: 1.5rem;
+    }
+
+    label {
+        font-size: 16px;
+    }
+}
