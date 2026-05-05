@@ -5,6 +5,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     checkAuth();
     initializeDashboard();
+
+    
     
     // Setup search debounce for security logs
     const searchInput = document.getElementById('adminLogSearch');
@@ -2315,4 +2317,56 @@ function clearAdminLogFilters() {
         
         if (typeof showToast === 'function') showToast('Filters cleared');
     }
+}
+
+// ============================================
+// MOBILE SIDEBAR TOGGLE FOR ADMIN DASHBOARD
+// ============================================
+
+function initMobileSidebar() {
+    const toggleBtn = document.getElementById('sidebarToggle');
+    const overlay = document.getElementById('sidebarOverlay');
+    const sidebar = document.querySelector('.sidebar');
+    
+    if (!toggleBtn || !overlay || !sidebar) return;
+    
+    // Toggle sidebar function
+    function toggleSidebar() {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('active');
+        // Prevent body scroll when sidebar is open
+        document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+    }
+    
+    // Close sidebar function
+    function closeSidebar() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    // Event listeners
+    toggleBtn.addEventListener('click', toggleSidebar);
+    overlay.addEventListener('click', closeSidebar);
+    
+    // Close sidebar on window resize above mobile breakpoint
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 991) {
+            closeSidebar();
+        }
+    });
+    
+    // Close sidebar when pressing Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeSidebar();
+        }
+    });
+}
+
+// Initialize mobile sidebar when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMobileSidebar);
+} else {
+    initMobileSidebar();
 }

@@ -441,20 +441,7 @@ try {
     respond(true, ['id' => $userId], $message);
     break;
 
-    // Inside update_admin case, after updating the role
-// Handle super admin promotion
-if ($newRole === 'super admin' && $originalUser['account_status'] !== 'super admin') {
-    // Block all other active super admins
-    $blockedCount = blockOtherSuperAdmins($db, $input['id'], $currentUser['username'],
-        'Auto-blocked: User promoted to super admin. Only one active super admin allowed.');
-    
-    // Update last_active for the new super admin
-    updateLastActive($db, $input['id']);
-    
-    if ($transactionStarted) $db->commit();
-} elseif ($transactionStarted) {
-    $db->commit();
-}
+
 
         case 'delete_admin':
         case 'delete_user':

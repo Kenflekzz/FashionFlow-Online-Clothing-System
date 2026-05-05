@@ -46,22 +46,64 @@ function setupFormHandler() {
 }
 
 /**
- * Handle form submission
- * Two-step process: 1) Validate User ID, 2) Send OTP
+ * Handle form submission with account approval check
+ * Three-step process: 1) Check Account Approval, 2) Validate User ID, 3) Send OTP
  */
 async function handleFormSubmit(e) {
     e.preventDefault();
     
-    const formData      = new FormData(e.target);
-    const submitButton  = document.getElementById('submitButton');
-    const btnText       = document.getElementById('btnText');
+    const formData = new FormData(e.target);
+    const user_id = formData.get('user_id');
+    const submitButton = document.getElementById('submitButton');
+    const btnText = document.getElementById('btnText');
     const alertContainer = document.getElementById('alertContainer');
     
+    // Clear previous alerts
     alertContainer.innerHTML = '';
-    setLoadingState(submitButton, btnText, true, 'Verifying...');
+    
+    // Validate format
+    const pattern = /^\d{4}-\d{4}$/;
+    if (!pattern.test(user_id)) {
+        showAlert('Please enter a valid User ID in format: xxxx-xxxx', 'error');
+        return;
+    }
+    
+    setLoadingState(submitButton, btnText, true, 'Checking account...');
     
     try {
-        // ── Step 1: Validate User ID ──────────────────────────────
+        // ── Step 1: Check Account Approval Status ──────────────────────────────
+        const approvalResponse = await fetch('../php/check_account_approval.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ user_id: user_id })
+        });
+
+        const approvalData = await approvalResponse.json();
+
+        if (!approvalResponse.ok || !approvalData.success) {
+            throw new Error(approvalData.message || 'Failed to check account status');
+        }
+
+        // Check if account is approved by super admin
+        if (!approvalData.is_approved) {
+            let errorMessage = '⚠️ Account Not Approved. ';
+            if (approvalData.status === 'pending') {
+                errorMessage += 'Your account is pending approval from the Super Admin. Please wait for approval before resetting your password.';
+            } else if (approvalData.status === 'rejected') {
+                errorMessage += 'Your account has been rejected by the Super Admin. Please contact support for assistance.';
+            } else {
+                errorMessage += 'Please contact the Super Admin for account approval before proceeding with password recovery.';
+            }
+            showAlert(errorMessage, 'error');
+            resetButton(submitButton, btnText, 'Continue');
+            return;
+        }
+
+        // ── Step 2: Validate User ID ──────────────────────────────
+        setLoadingState(submitButton, btnText, true, 'Verifying user...');
+        
         const findResponse = await fetch('../php/find_user.php', {
             method: 'POST',
             body: formData
@@ -76,10 +118,10 @@ async function handleFormSubmit(e) {
         }
 
         // Store user_id and username immediately after step 1 succeeds
-        sessionStorage.setItem('recovery_user_id',  findData.user_id);
+        sessionStorage.setItem('recovery_user_id', findData.user_id);
         sessionStorage.setItem('recovery_username', findData.username);
 
-        // ── Step 2: Send OTP ──────────────────────────────────────
+        // ── Step 3: Send OTP ──────────────────────────────────────
         setLoadingState(submitButton, btnText, true, 'Sending code...');
         
         const otpResponse = await fetch('../php/send-otp.php', {
@@ -102,7 +144,7 @@ async function handleFormSubmit(e) {
         
     } catch (error) {
         console.error('Error:', error);
-        showAlert('Network error. Please check your connection and try again.', 'error');
+        showAlert(error.message || 'Network error. Please check your connection and try again.', 'error');
         resetButton(submitButton, btnText, 'Continue');
     }
 }
@@ -113,7 +155,7 @@ async function handleFormSubmit(e) {
 function buildRedirectUrl(baseUrl, email, userId) {
     const params = new URLSearchParams({
         email: email,
-        uid:   userId
+        uid: userId
     });
     return baseUrl + '?' + params.toString();
 }
@@ -123,7 +165,7 @@ function buildRedirectUrl(baseUrl, email, userId) {
  */
 function showAlert(message, type) {
     const alertContainer = document.getElementById('alertContainer');
-    const icon      = type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle';
+    const icon = type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle';
     const className = type === 'error' ? 'alert-error' : 'alert-success';
     
     alertContainer.innerHTML = `

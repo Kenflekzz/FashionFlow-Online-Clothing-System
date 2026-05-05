@@ -10,6 +10,11 @@ let recentActivityFiltered = [];
 let recentActivityCurrentPage = 1;
 let recentActivityPerPage = 5;
 
+let deletedAccountsAllData = [];
+let deletedAccountsFiltered = [];
+let deletedAccountsCurrentPage = 1;
+let deletedAccountsPerPage = 10;
+
 const API_URL = '../php/super_admin_api.php';
 const isFileProtocol = window.location.protocol === 'file:';
 const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
@@ -59,6 +64,35 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(checkFontAwesome, 1000);
     checkAuth();
     initializeDashboard();
+
+    // ── ADD THIS SIDEBAR TOGGLE BLOCK ──
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.querySelector('.sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            if (sidebarOverlay) sidebarOverlay.classList.toggle('active');
+        });
+    }
+
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+        });
+    }
+
+    // Close sidebar on mobile when nav item clicked
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('open');
+                if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+            }
+        });
+    });
 
     // Real-time search for activity logs
     const activitySearchInput = document.getElementById('activitySearch');
@@ -210,7 +244,14 @@ function showSection(section) {
         admins: { id: 'manageAdminsSection', nav: 1, fn: () => {} },
         users: { id: 'usersSection', nav: 2, fn: loadAllUsers },
         approvals: { id: 'registrationApprovalsSection', nav: 4, fn: () => { loadRegistrationStats(); loadRegistrations(); } },
-        deleted: { id: 'deletedAccountsSection', nav: 5, fn: loadDeletedAccounts },
+        deleted: { id: 'deletedAccountsSection', nav: 5, fn: () => { 
+            // Reset filters when showing deleted accounts
+            const dateFilter = document.getElementById('deletedDateFilter');
+            const searchInput = document.getElementById('deletedSearchInput');
+            if (dateFilter) dateFilter.value = '';
+            if (searchInput) searchInput.value = '';
+            loadDeletedAccounts(); 
+        } },
         activityLogs: { id: 'securityLogsSection', nav: 3, fn: loadSecurityLogs }
     };
 
@@ -292,19 +333,175 @@ function startSessionCheck() {
 }
 
 // ============================================
-// TOAST
+// TOAST NOTIFICATION SYSTEM - FIXED VERSION
 // ============================================
+
+let toastTimeout = null;
 
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
-    const msgEl = document.getElementById('toastMessage');
-    if (!toast || !msgEl) return;
-    const icon = toast.querySelector('i');
-    toast.style.borderLeft = type === 'success' ? '4px solid #10b981' : '4px solid #ef4444';
-    msgEl.textContent = message;
-    icon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+    const toastIcon = toast?.querySelector('i');
+    const toastMessage = document.getElementById('toastMessage');
+    
+    if (!toast || !toastMessage) {
+        console.warn('Toast elements not found');
+        return;
+    }
+    
+    // Clear any existing timeout
+    if (toastTimeout) {
+        clearTimeout(toastTimeout);
+        toastTimeout = null;
+    }
+    
+    // Remove existing show class to reset animation
+    toast.classList.remove('show');
+    
+    // Force a reflow to ensure animation works properly
+    void toast.offsetWidth;
+    
+    // Set icon and style based on type
+    if (toastIcon) {
+        toastIcon.className = '';
+        switch(type) {
+            case 'success':
+                toastIcon.className = 'fas fa-check-circle';
+                toast.style.borderLeft = '4px solid #10b981';
+                break;
+            case 'error':
+                toastIcon.className = 'fas fa-exclamation-circle';
+                toast.style.borderLeft = '4px solid #ef4444';
+                break;
+            case 'warning':
+                toastIcon.className = 'fas fa-exclamation-triangle';
+                toast.style.borderLeft = '4px solid #f59e0b';
+                break;
+            default:
+                toastIcon.className = 'fas fa-info-circle';
+                toast.style.borderLeft = '4px solid #3b82f6';
+        }
+    }
+    
+    // Set message
+    toastMessage.textContent = message;
+    
+    // Show toast with animation
     toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3000);
+    
+    // Auto hide after 3 seconds
+    toastTimeout = setTimeout(() => {
+        hideToast();
+    }, 3000);
+}
+
+function hideToast() {
+    const toast = document.getElementById('toast');
+    if (toast) {
+        toast.classList.remove('show');
+    }
+    if (toastTimeout) {
+        clearTimeout(toastTimeout);
+        toastTimeout = null;
+    }
+}
+
+// Add click handler to hide toast when clicked
+document.addEventListener('DOMContentLoaded', function() {
+    const toast = document.getElementById('toast');
+    if (toast) {
+        toast.style.cursor = 'pointer';
+        toast.addEventListener('click', function() {
+            hideToast();
+        });
+    }
+});
+
+// ============================================
+// FORM SUBMISSION HANDLER - UPDATED FOR TOAST
+// ============================================
+
+async function handleFormSubmit(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    // Clear any existing toasts before showing new one
+    hideToast();
+    
+    // Validate form
+    if (typeof validateRegistrationForm === 'function') {
+        const role = document.getElementById('staffSelectedRole')?.value || 'user';
+        const requireSecurity = role === 'user';
+        const errors = validateRegistrationForm(null, requireSecurity);
+        if (errors && errors.length > 0) {
+            showToast(errors[0], 'error');
+            return;
+        }
+    }
+    
+    // Show loading state
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+    submitBtn.disabled = true;
+    
+    // Create FormData object
+    const formData = new FormData(form);
+    
+    // Add the selected role from radio buttons
+    const selectedRole = document.querySelector('input[name="account_status_radio"]:checked');
+    if (selectedRole) {
+        formData.set('account_status', selectedRole.value);
+    }
+    
+    try {
+        const response = await fetch('../php/admin_create_account.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showToast(result.message || 'Account created successfully!', 'success');
+            
+            // Reset form after a short delay
+            setTimeout(() => {
+                if (typeof resetForm === 'function') {
+                    resetForm();
+                } else {
+                    form.reset();
+                    // Reset role selection
+                    const userRadio = document.querySelector('input[name="account_status_radio"][value="user"]');
+                    if (userRadio) {
+                        userRadio.checked = true;
+                        document.getElementById('staffSelectedRole').value = 'user';
+                        if (typeof updateRoleSelectionStyle === 'function') {
+                            updateRoleSelectionStyle(userRadio);
+                        }
+                        if (typeof togglePrivilegesSection === 'function') {
+                            togglePrivilegesSection();
+                        }
+                    }
+                }
+            }, 1500);
+            
+            // Refresh the users table if visible
+            const usersSection = document.getElementById('usersSection');
+            if (usersSection && usersSection.style.display !== 'none') {
+                setTimeout(() => loadAllUsers(), 500);
+            }
+            
+        } else {
+            showToast(result.message || 'Failed to create account', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Network error. Please try again.', 'error');
+    } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
 }
 
 // ============================================
@@ -2275,23 +2472,77 @@ function setupSearchListener() {
             }, 300);
         });
     }
+    
+    // Add role filter listener
+    const roleFilter = document.getElementById('activityRoleFilter');
+    if (roleFilter) {
+        roleFilter.addEventListener('change', function() {
+            filterRecentActivity();
+        });
+    }
+    
+    // Add date filter listener
+    const dateFilter = document.getElementById('activityDateFilter');
+    if (dateFilter) {
+        dateFilter.addEventListener('change', function() {
+            filterRecentActivity();
+        });
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    const userId = sessionStorage.getItem('user_id');
+    const accountStatus = sessionStorage.getItem('account_status');
+
+    console.log('Super Admin Dashboard loaded - Session data:', {
+        user_id: userId,
+        username: sessionStorage.getItem('username'),
+        account_status: accountStatus
+    });
+
+    if (!userId || !accountStatus) {
+        window.location.href = 'login.html';
+        return;
+    }
+    if (accountStatus !== 'super admin') {
+        window.location.href = 'unauthorized.html';
+        return;
+    }
+
+    loadAllUsers();
+    loadSecurityLogs();
+    startSessionCheck();
+    
+    // Setup filters
     setupSearchListener();
 });
 
+// ============================================
+// RECENT ACTIVITY WITH ROLE FILTER
+// ============================================
+
 function filterRecentActivity() {
     const filterDate = document.getElementById('activityDateFilter')?.value;
+    const filterRole = document.getElementById('activityRoleFilter')?.value;
     const searchTerm = document.getElementById('activitySearchInput')?.value.toLowerCase().trim() || '';
 
     recentActivityFiltered = recentActivityAllData.filter(log => {
+        // Date filter
         let matchesDate = true;
         if (filterDate && log.created_at) {
             const logDate = log.created_at.split(' ')[0];
             if (logDate !== filterDate) matchesDate = false;
         }
 
+        // Role filter
+        let matchesRole = true;
+        if (filterRole && filterRole !== 'all') {
+            const logRole = (log.role || 'user').toLowerCase();
+            const filterRoleLower = filterRole.toLowerCase();
+            matchesRole = logRole === filterRoleLower;
+        }
+
+        // Search filter
         let matchesSearch = true;
         if (searchTerm) {
             matchesSearch = (log.username && log.username.toLowerCase().includes(searchTerm)) ||
@@ -2300,38 +2551,44 @@ function filterRecentActivity() {
                 (log.user_id && String(log.user_id).toLowerCase().includes(searchTerm));
         }
 
-        return matchesDate && matchesSearch;
+        return matchesDate && matchesRole && matchesSearch;
     });
 
     recentActivityCurrentPage = 1;
-    recentActivityPerPage = 5;
     const perPageSelect = document.getElementById('recentActivityPerPage');
-    if (perPageSelect) perPageSelect.value = '5';
+    if (perPageSelect) recentActivityPerPage = parseInt(perPageSelect.value);
     renderRecentActivity();
 
-    if (filterDate || searchTerm) {
-        let message = `Found ${recentActivityFiltered.length} activities`;
-        if (filterDate) message += ` on ${filterDate}`;
-        if (searchTerm) message += ` matching "${searchTerm}"`;
-        showToast(message, 'info');
+    // Show filter summary
+    let filterSummary = [];
+    if (filterDate) filterSummary.push(`date: ${filterDate}`);
+    if (filterRole && filterRole !== 'all') {
+        const roleName = filterRole === 'super admin' ? 'Super Admin' : filterRole === 'admin' ? 'Admin' : 'User';
+        filterSummary.push(`role: ${roleName}`);
     }
+    if (searchTerm) filterSummary.push(`search: "${searchTerm}"`);
+    
+    const filterText = filterSummary.length > 0 ? ` (${filterSummary.join(', ')})` : '';
+    showToast(`Found ${recentActivityFiltered.length} activities${filterText}`, 'info');
 }
 
 function clearRecentActivityFilters() {
     const dateFilter = document.getElementById('activityDateFilter');
+    const roleFilter = document.getElementById('activityRoleFilter');
     const searchInput = document.getElementById('activitySearchInput');
 
     if (dateFilter) dateFilter.value = '';
+    if (roleFilter) roleFilter.value = 'all';
     if (searchInput) searchInput.value = '';
 
     recentActivityFiltered = [...recentActivityAllData];
     recentActivityCurrentPage = 1;
-    recentActivityPerPage = 5;
     const perPageSelect = document.getElementById('recentActivityPerPage');
-    if (perPageSelect) perPageSelect.value = '5';
+    if (perPageSelect) recentActivityPerPage = parseInt(perPageSelect.value);
     renderRecentActivity();
     showToast('Filters cleared, showing all activities', 'info');
 }
+
 
 function renderRecentActivity() {
     const tbody = document.getElementById('recentActivityTableBody');
@@ -2504,32 +2761,51 @@ function showRecentActivityError(message) {
     }
 }
 
-function viewProof(filename) {
+// ============================================
+// PROOF MODAL FUNCTIONS WITH ACCOUNT DETAILS
+// ============================================
+
+function viewProofWithDetails(filename, deletedUserId, fullName, username, email, deletedBy, requestedBy, deletedAt, reason) {
     if (!filename) {
-        console.error('No filename provided');
         showToast('No proof file available', 'error');
         return;
     }
 
-    const modal = document.getElementById('viewProofModal');
-    const content = document.getElementById('viewProofContent');
-    const title = document.getElementById('viewProofTitle');
+    const modal = document.getElementById('proofImageModal');
+    const content = document.getElementById('proofFileContainer');
+    const downloadLink = document.getElementById('proofDownloadLink');
+    
+    // Get all table cell elements
+    const accountIdEl = document.getElementById('proofAccountId');
+    const fullNameEl = document.getElementById('proofFullName');
+    const usernameEl = document.getElementById('proofUsername');
+    const emailEl = document.getElementById('proofEmail');
+    const deletedByEl = document.getElementById('proofDeletedBy');
+    const requestedByEl = document.getElementById('proofRequestedBy');
+    const deletedAtEl = document.getElementById('proofDeletedAt');
+    const reasonEl = document.getElementById('proofReason');
 
     if (!modal) {
-        console.error('View proof modal not found');
-        showToast('Modal not found', 'error');
+        console.error('Proof modal not found');
+        showToast('Modal not found. Please refresh the page.', 'error');
         return;
     }
 
     if (!content) {
-        console.error('View proof content element not found');
-        showToast('Content element not found', 'error');
+        console.error('Proof file container not found');
+        showToast('Content container not found', 'error');
         return;
     }
 
-    if (title) {
-        title.textContent = 'Deletion Authorization Proof';
-    }
+    // Populate the account details in the modal table
+    if (accountIdEl) accountIdEl.textContent = deletedUserId || '--';
+    if (fullNameEl) fullNameEl.textContent = fullName || '--';
+    if (usernameEl) usernameEl.textContent = username || '--';
+    if (emailEl) emailEl.textContent = email || '--';
+    if (deletedByEl) deletedByEl.textContent = deletedBy || '--';
+    if (requestedByEl) requestedByEl.textContent = requestedBy || '--';
+    if (deletedAtEl) deletedAtEl.textContent = deletedAt || '--';
+    if (reasonEl) reasonEl.textContent = reason || '--';
 
     const fileExt = filename.split('.').pop().toLowerCase();
     const filePath = '../uploads/deletion_proofs/' + filename;
@@ -2537,7 +2813,7 @@ function viewProof(filename) {
     let html = '';
 
     if (fileExt === 'jpg' || fileExt === 'jpeg' || fileExt === 'png') {
-        html = `<img src="${filePath}" style="max-width: 100%; max-height: 70vh; border-radius: 8px;" onerror="this.src='../images/no-image.png'; alert('Failed to load image');">`;
+        html = `<img src="${filePath}" style="max-width: 100%; max-height: 60vh; border-radius: 8px;" onerror="this.src='../images/no-image.png'; this.onerror=null; alert('Failed to load image');">`;
     } else if (fileExt === 'pdf') {
         html = `<embed src="${filePath}" type="application/pdf" width="100%" height="500px" style="border-radius: 8px;">`;
     } else if (fileExt === 'doc' || fileExt === 'docx') {
@@ -2563,8 +2839,49 @@ function viewProof(filename) {
     }
 
     content.innerHTML = html;
+    
+    // Set download link
+    if (downloadLink) {
+        downloadLink.href = filePath;
+        downloadLink.download = filename;
+    }
+    
     modal.style.display = 'flex';
-    modal.classList.add('show');
+    modal.classList.add('active');
+}
+
+function closeProofModal() {
+    const modal = document.getElementById('proofImageModal');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.classList.remove('active');
+    }
+    // Clear content
+    const content = document.getElementById('proofFileContainer');
+    if (content) {
+        content.innerHTML = '<p>Loading...</p>';
+    }
+    // Clear table data
+    const fields = ['proofAccountId', 'proofFullName', 'proofUsername', 'proofEmail', 'proofDeletedBy', 'proofRequestedBy', 'proofDeletedAt', 'proofReason'];
+    fields.forEach(field => {
+        const el = document.getElementById(field);
+        if (el) el.textContent = '--';
+    });
+}
+
+
+
+function closeProofModal() {
+    const modal = document.getElementById('proofImageModal');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.classList.remove('active');
+    }
+    // Clear content
+    const content = document.getElementById('proofFileContainer');
+    if (content) {
+        content.innerHTML = '<p>Loading...</p>';
+    }
 }
 
 function closeViewProofModal() {
@@ -2579,9 +2896,11 @@ function closeViewProofModal() {
     }
 }
 
+
 // ============================================
-// DELETED ACCOUNTS
+// DELETED ACCOUNTS WITH SINGLE DATE FILTER
 // ============================================
+
 
 function loadDeletedAccounts() {
     console.log('Loading deleted accounts...');
@@ -2602,8 +2921,16 @@ function loadDeletedAccounts() {
         })
         .then(data => {
             if (data.success) {
-                renderDeletedAccountsTable(data.data.records || []);
-                updateDeletedAccountsStats(data.data.records || []);
+                // Map the data to include deleted_user_id
+                deletedAccountsAllData = (data.data.records || []).map(record => ({
+                    ...record,
+                    deleted_user_id: record.deleted_user_id || record.user_id || 'N/A'
+                }));
+                deletedAccountsFiltered = [...deletedAccountsAllData];
+                deletedAccountsCurrentPage = 1;
+                deletedAccountsPerPage = parseInt(document.getElementById('deletedPerPage')?.value || 10);
+                renderDeletedAccountsTable();
+                updateDeletedAccountsStats(deletedAccountsAllData);
             } else {
                 showNoDeletedAccounts(data.message || 'Failed to load deleted accounts');
             }
@@ -2614,53 +2941,187 @@ function loadDeletedAccounts() {
         });
 }
 
-function renderDeletedAccountsTable(records) {
+function filterDeletedAccounts() {
+    const filterDate = document.getElementById('deletedDateFilter')?.value;
+    const searchTerm = document.getElementById('deletedSearchInput')?.value.toLowerCase().trim() || '';
+
+    deletedAccountsFiltered = deletedAccountsAllData.filter(record => {
+        // Single date filter
+        let matchesDate = true;
+        if (filterDate && record.deleted_at) {
+            const recordDate = record.deleted_at.split(' ')[0];
+            matchesDate = recordDate === filterDate;
+        }
+
+        // Search filter (ID, username, email, reason, requested_by, deleted_by)
+        let matchesSearch = true;
+        if (searchTerm) {
+            matchesSearch = 
+                (record.user_id && String(record.user_id).toLowerCase().includes(searchTerm)) ||
+                (record.username && record.username.toLowerCase().includes(searchTerm)) ||
+                (record.full_name && record.full_name.toLowerCase().includes(searchTerm)) ||
+                (record.email && record.email.toLowerCase().includes(searchTerm)) ||
+                (record.reason && record.reason.toLowerCase().includes(searchTerm)) ||
+                (record.requested_by && record.requested_by.toLowerCase().includes(searchTerm)) ||
+                (record.deleted_by && record.deleted_by.toLowerCase().includes(searchTerm));
+        }
+
+        return matchesDate && matchesSearch;
+    });
+
+    deletedAccountsCurrentPage = 1;
+    renderDeletedAccountsTable();
+    
+    // Show filter summary
+    let filterSummary = [];
+    if (filterDate) filterSummary.push(`date: ${filterDate}`);
+    if (searchTerm) filterSummary.push(`search: "${searchTerm}"`);
+    
+    const filterText = filterSummary.length > 0 ? ` (${filterSummary.join(', ')})` : '';
+    showToast(`Found ${deletedAccountsFiltered.length} deleted accounts${filterText}`, 'info');
+}
+
+function clearDeletedFilters() {
+    const dateFilter = document.getElementById('deletedDateFilter');
+    const searchInput = document.getElementById('deletedSearchInput');
+    const perPageSelect = document.getElementById('deletedPerPage');
+
+    if (dateFilter) dateFilter.value = '';
+    if (searchInput) searchInput.value = '';
+    if (perPageSelect) perPageSelect.value = '10';
+
+    deletedAccountsFiltered = [...deletedAccountsAllData];
+    deletedAccountsCurrentPage = 1;
+    deletedAccountsPerPage = 10;
+    renderDeletedAccountsTable();
+    showToast('Filters cleared, showing all deleted accounts', 'info');
+}
+
+function renderDeletedAccountsTable() {
     const tbody = document.getElementById('deletedAccountsTableBody');
     const showingInfo = document.getElementById('deletedShowingInfo');
 
     if (!tbody) return;
 
-    if (!records || records.length === 0) {
+    if (!deletedAccountsFiltered || deletedAccountsFiltered.length === 0) {
         showNoDeletedAccounts('No deleted accounts found');
         return;
     }
 
-    tbody.innerHTML = records.map((record, index) => {
+    const totalPages = Math.ceil(deletedAccountsFiltered.length / deletedAccountsPerPage);
+    if (deletedAccountsCurrentPage > totalPages) deletedAccountsCurrentPage = totalPages;
+    if (deletedAccountsCurrentPage < 1) deletedAccountsCurrentPage = 1;
+
+    const start = (deletedAccountsCurrentPage - 1) * deletedAccountsPerPage;
+    const end = Math.min(start + deletedAccountsPerPage, deletedAccountsFiltered.length);
+    const pageData = deletedAccountsFiltered.slice(start, end);
+
+    tbody.innerHTML = pageData.map((record, idx) => {
+        // Escape all values to prevent XSS
+        const proofFile = record.proof_file ? escapeHtml(record.proof_file) : '';
+        // Use deleted_user_id from database
+        const deletedUserId = record.deleted_user_id ? escapeHtml(record.deleted_user_id) : 'N/A';
+        const username = record.username ? escapeHtml(record.username) : 'N/A';
+        const fullName = record.full_name ? escapeHtml(record.full_name) : 'Unknown';
+        const email = record.email ? escapeHtml(record.email) : 'N/A';
+        const reason = record.reason ? escapeHtml(record.reason) : 'No reason provided';
+        const requestedBy = record.requested_by ? escapeHtml(record.requested_by) : 'N/A';
+        const deletedBy = record.deleted_by ? escapeHtml(record.deleted_by) : 'N/A';
+        const deletedAt = record.deleted_at ? formatDateTime(record.deleted_at) : 'N/A';
+        
         const proofBtn = record.proof_file ?
-            `<button class="action-btn view" onclick="viewProof('${record.proof_file}')" title="View Proof"><i class="fas fa-file-alt"></i></button>` :
+            `<button class="action-btn view" onclick="viewProofWithDetails('${proofFile}', '${deletedUserId}', '${fullName}', '${username}', '${email}', '${deletedBy}', '${requestedBy}', '${deletedAt}', '${reason}')" title="View Proof"><i class="fas fa-file-alt"></i></button>` :
             '<span style="color:#9ca3af;">No proof</span>';
 
         return `
             <tr>
-                <td>${index + 1}</td>
+                <td>${start + idx + 1}</div>
                 <td>
                     <div class="admin-info">
-                        <div class="admin-avatar-small" style="background:#ef4444;">${getInitials(record.full_name || record.username)}</div>
+                        <div class="admin-avatar-small" style="background:#ef4444;">${getInitials(fullName)}</div>
                         <div class="admin-details">
-                            <h4>${escapeHtml(record.full_name || 'Unknown')}</h4>
-                            <p>@${escapeHtml(record.username || 'N/A')}</p>
-                            <small style="color:#6b7280;">${escapeHtml(record.email || 'N/A')}</small>
+                            <h4>${fullName}</h4>
+                            <p>@${username}</p>
+                            <small style="color:#6b7280;">ID: ${deletedUserId}</small><br>
+                            <small style="color:#6b7280;">${email}</small>
                         </div>
                     </div>
-                </td>
-                <td style="max-width:200px; font-size:12px;">${escapeHtml(record.reason || 'No reason provided')}</td>
-                <td>${escapeHtml(record.requested_by || 'N/A')}</td>
-                <td>${escapeHtml(record.deleted_by || 'N/A')}</td>
-                <td>${formatDateTime(record.deleted_at)}</div>
-                <td>
-                    <div class="action-btns">
+                 </div>
+                <td style="max-width:250px; font-size:12px;">${reason}</div>
+                <td style="font-size:12px;">${requestedBy}</div>
+                <td style="font-size:12px;">${deletedBy}</div>
+                <td style="text-align:center;">
+                    <div class="action-btns" style="justify-content:center;">
                         ${proofBtn}
                     </div>
                 </div>
+                <td style="font-size:12px; white-space:nowrap;">${deletedAt}</div>
             </tr>`;
     }).join('');
 
     if (showingInfo) {
-        showingInfo.textContent = `Showing ${records.length} of ${records.length} records`;
+        showingInfo.textContent = `Showing ${start + 1}–${end} of ${deletedAccountsFiltered.length} records`;
     }
 
-    const pagination = document.getElementById('deletedPagination');
-    if (pagination) pagination.innerHTML = '';
+    renderDeletedAccountsPagination(totalPages);
+}
+
+function renderDeletedAccountsPagination(totalPages) {
+    const container = document.getElementById('deletedPagination');
+    if (!container) return;
+
+    if (totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+    }
+
+    let html = `<button class="pagination-btn" onclick="goToDeletedPage(${deletedAccountsCurrentPage - 1})" ${deletedAccountsCurrentPage === 1 ? 'disabled' : ''}>
+                    <i class="fas fa-chevron-left"></i>
+                </button>`;
+
+    const maxVisible = 5;
+    let startPage = Math.max(1, deletedAccountsCurrentPage - Math.floor(maxVisible / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+    if (endPage - startPage < maxVisible - 1) {
+        startPage = Math.max(1, endPage - maxVisible + 1);
+    }
+
+    if (startPage > 1) {
+        html += `<button class="pagination-btn" onclick="goToDeletedPage(1)">1</button>`;
+        if (startPage > 2) html += `<span class="pagination-ellipsis">...</span>`;
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+        html += `<button class="pagination-btn ${i === deletedAccountsCurrentPage ? 'active' : ''}" onclick="goToDeletedPage(${i})">${i}</button>`;
+    }
+
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) html += `<span class="pagination-ellipsis">...</span>`;
+        html += `<button class="pagination-btn" onclick="goToDeletedPage(${totalPages})">${totalPages}</button>`;
+    }
+
+    html += `<button class="pagination-btn" onclick="goToDeletedPage(${deletedAccountsCurrentPage + 1})" ${deletedAccountsCurrentPage === totalPages ? 'disabled' : ''}>
+                <i class="fas fa-chevron-right"></i>
+            </button>`;
+
+    container.innerHTML = html;
+}
+
+function goToDeletedPage(page) {
+    const totalPages = Math.ceil(deletedAccountsFiltered.length / deletedAccountsPerPage);
+    if (page < 1 || page > totalPages) return;
+    deletedAccountsCurrentPage = page;
+    renderDeletedAccountsTable();
+}
+
+function changeDeletedPerPage() {
+    const select = document.getElementById('deletedPerPage');
+    if (select) {
+        deletedAccountsPerPage = parseInt(select.value);
+        deletedAccountsCurrentPage = 1;
+        renderDeletedAccountsTable();
+    }
 }
 
 function updateDeletedAccountsStats(records) {
@@ -2700,10 +3161,25 @@ function showNoDeletedAccounts(message) {
     if (pagination) pagination.innerHTML = '';
 }
 
-function changeDeletedPerPage() {
-    loadDeletedAccounts();
-}
-
+// Real-time search listener for deleted accounts
+document.addEventListener('DOMContentLoaded', function() {
+    const deletedSearchInput = document.getElementById('deletedSearchInput');
+    if (deletedSearchInput) {
+        let searchTimeout;
+        deletedSearchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                filterDeletedAccounts();
+            }, 300);
+        });
+    }
+    
+    // Date filter change listener
+    const deletedDateFilter = document.getElementById('deletedDateFilter');
+    if (deletedDateFilter) {
+        deletedDateFilter.addEventListener('change', () => filterDeletedAccounts());
+    }
+});
 // ============================================
 // RECORD LOGOUT ACTIVITY
 // ============================================

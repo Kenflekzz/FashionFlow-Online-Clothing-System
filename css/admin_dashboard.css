@@ -1881,3 +1881,560 @@ select.input-valid {
         justify-content: flex-end;
     }
 }
+
+/* ============================================
+   MOBILE SIDEBAR TOGGLE & RESPONSIVE STYLES
+   ============================================ */
+
+/* Sidebar Toggle Button - Hidden on desktop */
+#sidebarToggle {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1001;
+    background: #7c3e2e;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+#sidebarToggle:hover {
+    background: #5e2f22;
+    transform: scale(1.05);
+}
+
+/* Sidebar Overlay */
+#sidebarOverlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    transition: all 0.3s ease;
+}
+
+#sidebarOverlay.active {
+    display: block;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN - COMPLETE REPLACEMENT
+   (Replace lines ~850-900 with this)
+============================================ */
+
+/* Tablet Landscape (992px - 1199px) */
+@media (max-width: 1199px) {
+    .quick-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+    
+    #customerStats.quick-stats {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .pipeline {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .top-nav {
+        padding: 0 20px;
+    }
+}
+
+/* Tablet Portrait (768px - 991px) - Sidebar becomes collapsible */
+@media (max-width: 991px) {
+    /* Show sidebar toggle button */
+    #sidebarToggle {
+        display: flex !important;
+        position: fixed !important;
+        top: 15px !important;
+        left: 15px !important;
+        z-index: 1002 !important;
+        background: #7c3e2e !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 10px !important;
+        width: 44px !important;
+        height: 44px !important;
+        font-size: 20px !important;
+        cursor: pointer !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+    }
+    
+    /* Sidebar - hidden by default (NOT display:none) */
+    .sidebar {
+        position: fixed !important;
+        left: -280px !important;
+        top: 0 !important;
+        width: 280px !important;
+        height: 100vh !important;
+        z-index: 1001 !important;
+        transition: left 0.3s ease !important;
+        background: #3d241e !important;
+        overflow-y: auto !important;
+        padding-top: 70px !important;
+        display: block !important; /* Important: NOT display:none */
+        visibility: visible !important;
+    }
+    
+    /* Sidebar open state - slides in */
+    .sidebar.open {
+        left: 0 !important;
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3) !important;
+    }
+    
+    /* Main content - full width */
+    .main-content {
+        margin-left: 0 !important;
+        padding: 20px !important;
+        padding-top: 80px !important;
+    }
+    
+    /* Top navigation - fixed */
+    .top-nav {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 100 !important;
+        height: 60px !important;
+    }
+    
+    /* Adjust nav brand for toggle button */
+    .nav-brand {
+        margin-left: 55px !important;
+    }
+    
+    /* Hide search box on tablets */
+    .search-box {
+        display: none !important;
+    }
+    
+    /* Quick stats - 2 columns */
+    .quick-stats {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 15px !important;
+        margin-top: 80px !important;
+    }
+    
+    #customerStats.quick-stats {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    
+    /* Pipeline - 2 columns */
+    .pipeline {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 15px !important;
+    }
+    
+    /* Forms - single column */
+    .form-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .role-selector {
+        grid-template-columns: 1fr !important;
+    }
+    
+    /* Filter bar - stacked */
+    .filter-bar {
+        flex-direction: column !important;
+    }
+    
+    .filter-group {
+        width: 100% !important;
+    }
+    
+    .filter-actions {
+        flex-direction: column !important;
+    }
+    
+    .btn-filter, .btn-clear {
+        width: 100% !important;
+    }
+    
+    /* Tables - scrollable */
+    .table-responsive {
+        overflow-x: auto !important;
+    }
+    
+    .data-table {
+        min-width: 650px !important;
+    }
+    
+    /* Page header adjustments */
+    .page-header {
+        flex-direction: column !important;
+        gap: 15px !important;
+    }
+    
+    /* Card header adjustments */
+    .card-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+    }
+    
+    .header-actions {
+        width: 100% !important;
+    }
+    
+    /* Modal adjustments */
+    .modal-content {
+        width: 95% !important;
+        margin: 10px !important;
+        max-height: 90vh !important;
+    }
+}
+
+/* Mobile (576px - 767px) */
+@media (max-width: 767px) {
+    .quick-stats {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+    
+    #customerStats.quick-stats {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .pipeline {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .top-nav {
+        height: 55px !important;
+    }
+    
+    .brand-text span {
+        display: none !important;
+    }
+    
+    .brand-icon {
+        width: 35px !important;
+        height: 35px !important;
+    }
+    
+    .brand-icon i {
+        font-size: 18px !important;
+    }
+    
+    .brand-text h1 {
+        font-size: 16px !important;
+    }
+    
+    .user-info {
+        display: none !important;
+    }
+    
+    .notification {
+        display: none !important;
+    }
+    
+    #sidebarToggle {
+        width: 38px !important;
+        height: 38px !important;
+        font-size: 16px !important;
+        top: 10px !important;
+        left: 10px !important;
+    }
+    
+    .nav-brand {
+        margin-left: 50px !important;
+    }
+    
+    .stat-box {
+        padding: 15px !important;
+    }
+    
+    .stat-info h3 {
+        font-size: 22px !important;
+    }
+    
+    .stat-icon {
+        width: 45px !important;
+        height: 45px !important;
+        font-size: 18px !important;
+    }
+    
+    .card-body {
+        padding: 15px !important;
+    }
+    
+    .btn-sm {
+        padding: 4px 8px !important;
+        font-size: 11px !important;
+    }
+}
+
+/* Small Mobile (below 480px) */
+@media (max-width: 480px) {
+    .top-nav {
+        padding: 0 10px !important;
+    }
+    
+    .brand-text h1 {
+        font-size: 14px !important;
+    }
+    
+    .brand-icon {
+        width: 30px !important;
+        height: 30px !important;
+    }
+    
+    .brand-icon i {
+        font-size: 16px !important;
+    }
+    
+    #sidebarToggle {
+        width: 34px !important;
+        height: 34px !important;
+        font-size: 14px !important;
+        top: 12px !important;
+        left: 8px !important;
+    }
+    
+    .nav-brand {
+        margin-left: 45px !important;
+    }
+    
+    .main-content {
+        padding: 12px !important;
+        padding-top: 75px !important;
+    }
+    
+    .header-content h2 {
+        font-size: 20px !important;
+    }
+    
+    .header-content p {
+        font-size: 12px !important;
+    }
+    
+    .stat-info h3 {
+        font-size: 18px !important;
+    }
+    
+    .stat-info p {
+        font-size: 11px !important;
+    }
+    
+    .btn-primary, .btn-outline {
+        padding: 6px 12px !important;
+        font-size: 12px !important;
+    }
+    
+    .pagination button {
+        min-width: 28px !important;
+        height: 28px !important;
+        font-size: 11px !important;
+    }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 767px) and (orientation: landscape) {
+    .sidebar {
+        padding-top: 60px !important;
+    }
+    
+    .quick-stats {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    
+    .main-content {
+        padding-top: 70px !important;
+    }
+}
+
+/* Very Small Mobile (max-width: 480px) */
+@media (max-width: 480px) {
+    .quick-stats {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .stat-box {
+        padding: 12px !important;
+    }
+    
+    .brand-text span {
+        display: none !important;
+    }
+    
+    .user-info {
+        display: none !important;
+    }
+    
+    .notification {
+        display: none !important;
+    }
+    
+    #sidebarToggle {
+        width: 38px !important;
+        height: 38px !important;
+        font-size: 16px !important;
+        top: 12px !important;
+        left: 12px !important;
+    }
+    
+    .nav-brand {
+        margin-left: 45px;
+    }
+    
+    .brand-text h1 {
+        font-size: 14px !important;
+    }
+}
+
+/* Fix for iOS Safari */
+@supports (-webkit-touch-callout: none) {
+    .sidebar {
+        height: -webkit-fill-available !important;
+    }
+}
+
+/* ============================================
+   SMART TV & LARGE SCREEN SAFETY
+   Prevents layout breaks on large displays
+   ============================================ */
+
+/* Large screens / Smart TV (1080p and above) */
+@media (min-width: 1920px) {
+    /* Limit content width for better readability */
+    .main-content {
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+    
+    /* Slightly larger fonts for better visibility from distance */
+    body {
+        font-size: 18px;
+    }
+    
+    .data-table td,
+    .data-table th,
+    .admins-table td,
+    .admins-table th {
+        font-size: 16px;
+        padding: 15px 20px;
+    }
+    
+    .stat-info h3 {
+        font-size: 32px;
+    }
+    
+    .card-header h3,
+    .admin-header h2 {
+        font-size: 22px;
+    }
+    
+    /* Ensure buttons are readable */
+    .btn,
+    .btn-primary,
+    .btn-outline {
+        font-size: 16px;
+        padding: 12px 24px;
+    }
+    
+    /* Keep sidebar visible and properly positioned */
+    .sidebar {
+        width: 280px;
+    }
+    
+    .main-content {
+        margin-left: 280px;
+    }
+}
+
+/* 4K TVs (3840px and above) */
+@media (min-width: 3840px) {
+    body {
+        font-size: 24px;
+    }
+    
+    .main-content {
+        max-width: 2000px;
+        padding: 40px 60px;
+    }
+    
+    .data-table td,
+    .data-table th {
+        font-size: 20px;
+        padding: 20px 25px;
+    }
+    
+    .stat-info h3 {
+        font-size: 42px;
+    }
+    
+    .btn {
+        padding: 16px 32px;
+        font-size: 18px;
+    }
+    
+    /* Ensure sidebar doesn't get lost */
+    .sidebar {
+        width: 320px;
+    }
+    
+    .main-content {
+        margin-left: 320px;
+    }
+}
+
+/* Prevent layout shifts on all screen sizes */
+* {
+    box-sizing: border-box;
+}
+
+/* Ensure all containers handle overflow properly */
+.card,
+.admins-table-container,
+.create-admin-form,
+.table-responsive {
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+/* Keep images from breaking layout */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Ensure modals are properly sized on large screens */
+.modal-content {
+    max-width: 800px;
+    margin: 20px auto;
+}
+
+/* Make sure the sidebar toggle stays hidden on large screens (not needed) */
+@media (min-width: 992px) {
+    #sidebarToggle {
+        display: none !important;
+    }
+    
+    .sidebar {
+        display: flex !important;
+        left: 0 !important;
+        transform: none !important;
+    }
+    
+    .main-content {
+        margin-left: 260px;
+    }
+}

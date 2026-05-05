@@ -161,21 +161,33 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateStrengthUI(password) {
-        const bar   = document.getElementById('passwordStrengthBar');
-        const label = document.getElementById('passwordStrengthLabel');
-        if (!bar || !label) return;
-        if (!password) {
-            bar.className     = 'password-strength-bar';
-            bar.style.width   = '0%';
-            label.textContent = '';
-            label.className   = 'strength-label';
-            return;
-        }
-        const s = checkPasswordStrength(password);
-        bar.className     = `password-strength-bar strength-${s.toLowerCase()}`;
-        label.textContent = `Strength: ${s}`;
-        label.className   = `strength-label ${s.toLowerCase()}`;
+    const bar   = document.getElementById('passwordStrengthBar');
+    const label = document.getElementById('passwordStrengthLabel');
+    if (!bar || !label) return;
+    
+    // Check length first
+    const { min, max } = passwordLengthRule();
+    if (password && (password.length < min || password.length > max)) {
+        bar.className     = 'password-strength-bar';
+        bar.style.width   = '0%';
+        label.textContent = `Password must be ${min}–${max} characters`;
+        label.className   = 'strength-label weak';
+        return;
     }
+    
+    if (!password) {
+        bar.className     = 'password-strength-bar';
+        bar.style.width   = '0%';
+        label.textContent = '';
+        label.className   = 'strength-label';
+        return;
+    }
+    
+    const s = checkPasswordStrength(password);
+    bar.className     = `password-strength-bar strength-${s.toLowerCase()}`;
+    label.textContent = `Strength: ${s}`;
+    label.className   = `strength-label ${s.toLowerCase()}`;
+}
 
     // ─────────────────────────────────────────────────────────
     // 5. Core validateField — original logic, showAlert → showFieldError
@@ -727,14 +739,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 break;
             }
 
-            // ── PASSWORD ─────────────────────────────────────
+           
+           // ── PASSWORD ─────────────────────────────────────
             case 'pass': {
                 const password = formFields.pass.value;
                 const { min, max, label } = passwordLengthRule();
 
                 if (password.length < min || password.length > max) {
                     isValid = false;
-                    showFieldError(el, `Password must be between ${min} and ${max} characters (${label}).`);
+                    // Only show inline error if strength bar doesn't exist
+                    const hasStrengthBar = document.getElementById('passwordStrengthBar');
+                    if (!hasStrengthBar) {
+                        showFieldError(el, `Password must be between ${min} and ${max} characters (${label}).`);
+                    }
                 } else {
                     const passwordStrength = checkPasswordStrength(password);
                     if (passwordStrength === 'Weak') {
@@ -743,6 +760,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     } else if (passwordStrength === 'Medium') {
                         isValid = false;
                         showFieldError(el, "Password is medium. Please use a stronger password example (password@123).");
+                    } else if (passwordStrength === 'Strong') {
+                        isValid = true;
+                        showFieldSuccess(el);
                     }
                 }
 
@@ -752,17 +772,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 if (isValid) showFieldSuccess(el);
-                break;
-            }
-
-            // ── CONFIRM PASSWORD ─────────────────────────────
-            case 'repass': {
-                isValid = formFields.repass.value === formFields.pass.value;
-                if (!isValid) {
-                    showFieldError(el, "Passwords do not match.");
-                } else {
-                    showFieldSuccess(el);
-                }
                 break;
             }
 

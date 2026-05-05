@@ -195,7 +195,7 @@ if ($user['account_status'] === 'super admin') {
         $blockStmt = $conn->prepare("
             UPDATE users 
             SET is_blocked = 1, 
-                block_reason = 'Auto-blocked: Another super admin logged in. Only one active super admin allowed.',
+                block_reason = 'Auto-blocked: Another super admin currently active. Only one active super admin allowed.',
                 blocked_by = ?,
                 blocked_at = NOW(),
                 force_logout = 1

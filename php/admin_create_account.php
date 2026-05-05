@@ -11,10 +11,18 @@ header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
 try {
-    // Allow both admin and super admin
+    // Verify user is logged in
+    if (!isset($_SESSION['account_status']) || !isset($_SESSION['username'])) {
+        throw new Exception('Authentication required. Please log in.');
+    }
+    
+    // Allow both admin and super admin to access this endpoint
     $allowed_roles = ['super admin', 'admin'];
-    if (!in_array($_SESSION['account_status'] ?? '', $allowed_roles)) {
-        throw new Exception('Unauthorized access.');
+    $creator_role = $_SESSION['account_status'];
+    $creator_username = $_SESSION['username'];
+    
+    if (!in_array($creator_role, $allowed_roles)) {
+        throw new Exception('Unauthorized access. Admin or Super Admin privileges required.');
     }
 
     // DB connection
@@ -30,9 +38,42 @@ try {
     $json_data = json_decode(file_get_contents("php://input"), true);
     $data = $json_data ?: $_POST;
 
-    // Role determination — done early so it can gate validation
-    $role          = $data['role'] ?? $data['account_status'] ?? 'user';
-    $is_admin_role = in_array($role, ['admin', 'super admin']);
+    // Get intended role for the new account
+    $intended_role = $data['account_status'] ?? 'user';
+    
+    // Permission checks based on creator's role
+    if ($intended_role === 'super admin') {
+        // Only super admin can create another super admin
+        if ($creator_role !== 'super admin') {
+            throw new Exception('Only Super Admin can create another Super Admin account');
+        }
+        
+        // Check super admin limit (maximum 2)
+        $countStmt = $conn->prepare("SELECT COUNT(*) as count FROM users WHERE account_status = 'super admin'");
+        $countStmt->execute();
+        $countResult = $countStmt->get_result()->fetch_assoc();
+        $countStmt->close();
+        
+        if ((int)$countResult['count'] >= 2) {
+            throw new Exception('Maximum of 2 Super Admin accounts already exist. Cannot create a 3rd Super Admin account.');
+        }
+    } 
+    elseif ($intended_role === 'admin') {
+        // Both admin and super admin can create admin accounts
+        if (!in_array($creator_role, ['admin', 'super admin'])) {
+            throw new Exception('Only Admin or Super Admin can create Admin accounts');
+        }
+        // No limit check for admin accounts
+    }
+    elseif ($intended_role === 'user') {
+        // Both admin and super admin can create regular user accounts
+        if (!in_array($creator_role, ['admin', 'super admin'])) {
+            throw new Exception('Only Admin or Super Admin can create user accounts');
+        }
+    }
+    else {
+        throw new Exception('Invalid account status. Must be user, admin, or super admin');
+    }
 
     // Generate ID or use provided ID
     $userId = !empty($data['ID']) ? trim($data['ID']) : uniqid('STAFF_', true);
@@ -43,26 +84,35 @@ try {
     }
 
     // Required fields
-    $required = ['username','password','re_password','email','first_name','last_name','birthdate','sex'];
+    $required = ['username', 'password', 're_password', 'email', 'first_name', 'last_name', 'birthdate', 'sex'];
     foreach ($required as $field) {
         if (empty($data[$field])) {
             throw new Exception("Missing field: $field");
         }
     }
 
-    // Security questions — ONLY required for regular users, and only if they are provided in the form
+    // Security questions validation for regular users
+    $is_admin_role = in_array($intended_role, ['admin', 'super admin']);
+    
     if (!$is_admin_role) {
-        // Security questions are now optional - only validate if they are present
+        // Security questions are optional - only validate if they are present
         $hasSecQuestions = !empty($data['sec_question_1']) && !empty($data['sec_answer_1']);
         
         if ($hasSecQuestions) {
-            // If any security question is provided, all must be provided
-            if (
-                empty($data['sec_question_1']) || empty($data['sec_answer_1']) ||
-                empty($data['sec_question_2']) || empty($data['sec_answer_2']) ||
-                empty($data['sec_question_3']) || empty($data['sec_answer_3'])
-            ) {
-                throw new Exception("All security questions and answers are required if you choose to set them.");
+            // If any security question is provided, check if at least question 1 is complete
+            // But allow partial completion - only validate what's provided
+            $sec_q1_provided = !empty($data['sec_question_1']) && !empty($data['sec_answer_1']);
+            $sec_q2_provided = !empty($data['sec_question_2']) && !empty($data['sec_answer_2']);
+            $sec_q3_provided = !empty($data['sec_question_3']) && !empty($data['sec_answer_3']);
+            
+            // If question 2 is provided but question 2 answer is missing
+            if (!empty($data['sec_question_2']) && empty($data['sec_answer_2'])) {
+                throw new Exception("Security answer for question 2 is required if question 2 is provided");
+            }
+            
+            // If question 3 is provided but question 3 answer is missing
+            if (!empty($data['sec_question_3']) && empty($data['sec_answer_3'])) {
+                throw new Exception("Security answer for question 3 is required if question 3 is provided");
             }
         }
     }
@@ -81,6 +131,9 @@ try {
     if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
         throw new Exception('Invalid email address.');
     }
+
+    // Start transaction for data integrity
+    $conn->begin_transaction();
 
     // Duplicate checks with specific error messages
     // Check User ID
@@ -139,14 +192,12 @@ try {
     $country           = $data['country']           ?? 'Philippines';
     $zip_code          = $data['zip_code']          ?? $data['Zip-code'] ?? '';
 
-    $account_status  = $role;
-    // ALL accounts created by admin/super admin should be auto-approved
-    // Only public registration (from sign-in page) needs approval
+    $account_status  = $intended_role;  // Use the intended role, not user input
     $approval_status = 'approved';  // Always approved when created by admin/super admin
-    $approved_by     = $_SESSION['username'] ?? 'system';
+    $approved_by     = $creator_username;
 
     $stmt = $conn->prepare("
-    INSERT INTO users (
+    INSERT INTO users ( 
         user_ID, username, password, email,
         Fname, M_I, Lname, Extension,
         birthdate, sex, purok, barangay,
@@ -210,7 +261,7 @@ try {
     }
 
     // Insert privileges for admin/super admin
-    if ($is_admin_role && !empty($data['privileges'])) {
+    if ($is_admin_role && !empty($data['privileges']) && is_array($data['privileges'])) {
         $privStmt = $conn->prepare("
             INSERT INTO user_privileges 
             (user_id, module, can_create, can_read, can_update, can_delete, can_block)
@@ -219,50 +270,85 @@ try {
         
         if ($privStmt) {
             foreach ($data['privileges'] as $module => $actions) {
+                $can_create = in_array('create', $actions) ? 1 : 0;
+                $can_read = in_array('read', $actions) ? 1 : 0;
+                $can_update = in_array('update', $actions) ? 1 : 0;
+                $can_delete = in_array('delete', $actions) ? 1 : 0;
+                $can_block = in_array('block', $actions) ? 1 : 0;
+                
                 $privStmt->bind_param(
                     "ssiiiii",
                     $userId,
                     $module,
-                    in_array('create', $actions) ? 1 : 0,
-                    in_array('read', $actions) ? 1 : 0,
-                    in_array('update', $actions) ? 1 : 0,
-                    in_array('delete', $actions) ? 1 : 0,
-                    in_array('block', $actions) ? 1 : 0
+                    $can_create,
+                    $can_read,
+                    $can_update,
+                    $can_delete,
+                    $can_block
                 );
-                $privStmt->execute();
+                
+                if (!$privStmt->execute()) {
+                    throw new Exception('Failed to insert privileges for module: ' . $module);
+                }
             }
             $privStmt->close();
         }
     }
 
     // Log activity
-    require_once 'log_activity.php';
-    logActivity($conn, $userId, $data['username'], $role,
-        'Account Created',
-        "New {$role} account created",
-        $_SESSION['username'] ?? 'system'
-    );
+    if (file_exists('log_activity.php')) {
+        require_once 'log_activity.php';
+        logActivity($conn, $userId, $data['username'], $account_status,
+            'Account Created',
+            "New {$account_status} account created by {$creator_username}",
+            $creator_username
+        );
+    }
 
+    // Commit transaction
+    $conn->commit();
+    
     $stmt->close();
     $conn->close();
 
     // Success response
-    $message = ($role === 'super admin') ? 
-        'Super Admin account created successfully. Note: Only one super admin can be active at a time.' : 
-        'Account created successfully';
+    $message = '';
+    if ($account_status === 'super admin') {
+        $message = 'Super Admin account created successfully. Maximum limit is 2 Super Admin accounts.';
+    } elseif ($account_status === 'admin') {
+        $message = 'Admin account created successfully.';
+    } else {
+        $message = 'User account created successfully.';
+    }
     
     echo json_encode([
         'success' => true,
         'message' => $message,
-        'user_id' => $userId
+        'user_id' => $userId,
+        'role' => $account_status
     ]);
 
 } catch (Exception $e) {
+    // Rollback transaction if it was started
+    if (isset($conn) && $conn->connect_errno === 0) {
+        try {
+            $conn->rollback();
+        } catch (Exception $rollbackError) {
+            // Log rollback error but don't expose to user
+            error_log('Rollback failed: ' . $rollbackError->getMessage());
+        }
+    }
+    
     http_response_code(400);
     echo json_encode([
         'success' => false,
         'message' => $e->getMessage()
     ]);
+}
+
+// Clean up
+if (isset($conn) && $conn->connect_errno === 0) {
+    $conn->close();
 }
 
 ob_end_flush();

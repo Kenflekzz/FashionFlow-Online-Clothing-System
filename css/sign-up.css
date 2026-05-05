@@ -940,3 +940,41 @@ h2 {
     }
 }
 
+.password-strength-bar {
+    height: 4px;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    margin-top: 5px;
+}
+
+.password-strength-bar.strength-weak {
+    width: 33%;
+    background-color: #dc2626;
+}
+
+.password-strength-bar.strength-medium {
+    width: 66%;
+    background-color: #f59e0b;
+}
+
+.password-strength-bar.strength-strong {
+    width: 100%;
+    background-color: #16a34a;
+}
+
+.strength-label {
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+.strength-label.weak {
+    color: #dc2626;
+}
+
+.strength-label.medium {
+    color: #f59e0b;
+}
+
+.strength-label.strong {
+    color: #16a34a;
+}
