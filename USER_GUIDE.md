@@ -260,6 +260,54 @@ VALUES ('admin', 'admin@example.com', SHA2('AdminPassword123!', 256), 'Super Adm
 - See your personal information
 - Button: "Edit Profile" to update details
 
+#### **1B. Profile Management Details**
+The profile management system allows you to maintain complete control over your account information.
+
+**Viewing Your Profile**
+- Personal information displayed:
+  - Full name
+  - Email address
+  - Username
+  - Account creation date
+  - Account status
+  - Approval status
+  - Profile picture (if uploaded)
+
+**Editing Profile Information**
+- Click "Edit Profile"
+- Modify allowed fields:
+  - Full name
+  - Contact information
+  - Address details
+  - Phone number
+- Upload or change profile picture:
+  - Click profile picture area
+  - Select image (PNG, JPG, GIF)
+  - Image auto-resizes to fit
+  - Supported formats: PNG, JPG, GIF, WebP
+  - Max file size: 2MB recommended
+- Click "Save Changes"
+- Success message confirms update
+
+**Profile Picture Management**
+- Current photo displayed in account menu
+- Used in order history and communications
+- Can replace anytime
+- Click "Remove Picture" to delete
+- Default avatar used if no picture
+
+**Account Status Information**
+- **Approval Status**: Shows "approved", "pending", or "rejected"
+- **Account Status**: Shows "active" or "inactive"
+- **Block Status**: Shows if account is blocked and reason
+- Contact admin if status seems incorrect
+
+**Security Question Management**
+- Linked to your profile
+- Used for identity verification
+- Can be updated in "Security Questions" section
+- Answers are hashed and secure
+
 #### **2. Browse Products**
 - Main product listing with:
   - Product images
@@ -552,6 +600,33 @@ VALUES ('admin', 'admin@example.com', SHA2('AdminPassword123!', 256), 'Super Adm
 - Approval email sent to user
 - User can now log in
 
+**Approval/Rejection Tracking**
+- **Track Approval Status**:
+  - "Pending" - Waiting for review
+  - "Approved" - User can log in
+  - "Rejected" - User cannot use system
+  - "Approved by" - Shows which admin approved
+  - "Approved at" - Timestamp of approval
+  - "Rejection reason" - Why account was rejected (if applicable)
+
+- **Approval History**:
+  - View who approved each user
+  - See when approval was granted
+  - View original registration data
+  - Review approval timeline
+
+- **Rejection Details**:
+  - Rejection reason stored
+  - User informed of reason
+  - Rejection timestamp recorded
+  - Can re-apply after fixing issues
+
+- **Search Approval Status**:
+  - Filter by: Pending, Approved, Rejected
+  - View approval date range
+  - See approver information
+  - Track approval workflow
+
 **Reject Registration**
 - Click "Reject" button on user
 - Enter rejection reason:
@@ -612,6 +687,118 @@ VALUES ('admin', 'admin@example.com', SHA2('AdminPassword123!', 256), 'Super Adm
 - New temporary password generated
 - Email sent to admin with new password
 - Admin should change password on first login
+
+#### **2B. Admin Privilege Configuration**
+Configure exactly what each admin can and cannot do in the system.
+
+**Understanding Privileges**
+- Privileges control what each admin account can access
+- Different from user roles - more granular control
+- Set when creating admin account
+- Can be updated for existing admins
+
+**Available Modules and Permissions**
+
+**1. Users Module**
+- **Read**: View user list, profiles, account details
+- **Create**: Create new user accounts
+- **Update**: Edit user information, update status
+- **Delete**: Remove user accounts
+- **Block**: Block/unblock user accounts
+- **Approve**: Approve pending registrations
+
+**2. Products Module**
+- **Read**: View product catalog
+- **Create**: Add new products
+- **Update**: Edit product details, prices, stock
+- **Delete**: Remove products
+- **Upload**: Upload product images
+- **Bulk Update**: Update multiple products at once
+
+**3. Orders Module**
+- **Read**: View all orders
+- **Create**: Create orders manually
+- **Update**: Edit order details
+- **Update Status**: Change order status (Processing, Shipped, etc.)
+- **Cancel**: Cancel orders
+- **Print Labels**: Print shipping labels
+- **Export**: Export order data
+
+**4. Reports Module**
+- **Read**: View reports
+- **Generate**: Create custom reports
+- **Export**: Export reports to PDF/Excel
+- **View Analytics**: See dashboard analytics
+- **Download**: Download report files
+
+**5. Security Logs Module**
+- **Read**: View security logs
+- **Filter**: Search and filter logs
+- **Export**: Export security logs
+- **Review**: Audit user activities
+- **Archive**: Archive old logs
+
+**Setting Up Admin Privileges**
+
+**When Creating Admin**
+1. Fill in basic information (username, email, password)
+2. Select admin level:
+   - **Admin**: Limited privileges (cannot manage other admins)
+   - **Super Admin**: Full system privileges
+3. For Admin level, select modules:
+   - Check box for each module to grant access
+   - Select specific permissions within module
+   - Leave unchecked to deny access
+4. Create account
+5. Verify permissions in system
+
+**Modifying Admin Privileges**
+1. Go to "Manage Admins"
+2. Click "Edit Permissions" on admin account
+3. Review current privileges:
+   - Granted: Checkmark (✓)
+   - Denied: Empty box (☐)
+4. Update privileges:
+   - Check to grant access
+   - Uncheck to revoke access
+5. Save changes
+6. Changes take effect immediately
+
+**Privilege Combinations**
+
+**Example 1: Customer Service Admin**
+- Users: Read, Update, Block
+- Orders: Read, Update Status
+- Reports: Read, View Analytics
+- Products: Read
+- Security Logs: Read
+
+**Example 2: Inventory Manager**
+- Products: Full access (Read, Create, Update, Delete, Upload)
+- Orders: Read, Update Status
+- Reports: Read, Generate
+- Users: Read
+- Security Logs: None
+
+**Example 3: Support Admin**
+- Users: Full access
+- Orders: Read, Update Status, Cancel
+- Products: Read
+- Reports: Read
+- Security Logs: Read
+
+**Audit Trail**
+- Who can access what is logged
+- Changes to privileges recorded
+- Activity monitored by super admin
+- Compliance tracking available
+
+**Best Practices**
+- Grant minimum privileges needed
+- Review privileges regularly
+- Update when role changes
+- Document privilege assignments
+- Monitor for suspicious access
 
 #### **3. User Management**
 
@@ -687,6 +874,59 @@ VALUES ('admin', 'admin@example.com', SHA2('AdminPassword123!', 256), 'Super Adm
   - Suspicious activities
 - Export as PDF
 
+#### **4B. Activity Logging and History Viewer**
+The activity logging system provides a complete audit trail of all system activities.
+
+**Accessing Activity Logs**
+- Super Admin Dashboard → "Activity Logs" menu
+- See all recorded activities with details:
+  - User who performed action
+  - Type of activity (login, logout, create, update, delete, etc.)
+  - Description of activity
+  - Timestamp (date and time)
+  - IP address (if available)
+  - User role
+
+**Filtering Activity Logs**
+- **By Date Range**: Select start and end dates
+- **By Activity Type**:
+  - Login/Logout activities
+  - Product management
+  - Order processing
+  - User approvals
+  - Account blocking
+  - Profile updates
+  - Password changes
+- **By Username**: Search for specific user
+- **By Role**: Filter by user role (Customer, Admin, Super Admin)
+- **By Performed By**: See who performed the action
+
+**Using the Logs**
+- View detailed description of each activity
+- Click on log entry for full details
+- See timeline of specific user's actions
+- Track when changes were made
+- Identify patterns or anomalies
+
+**Pagination and Navigation**
+- View entries per page selector (10, 25, 50, 100)
+- Navigate through pages
+- Jump to specific page number
+- See total number of records
+
+**Exporting Activity Logs**
+- Download filtered logs as CSV
+- Export to Excel format
+- Includes all filtered fields
+- Useful for compliance and audits
+
+**Activity Log Examples**
+- Admin created product: "T-Shirt Blue" (SKU: TS-001)
+- Customer placed order: #ORD-12345
+- User password changed: Security measure taken
+- Account blocked: Reason: "Suspicious activity"
+- Registration approved: New customer account enabled
+
 #### **5. System Reports**
 
 **View Dashboard Statistics**
@@ -709,6 +949,167 @@ VALUES ('admin', 'admin@example.com', SHA2('AdminPassword123!', 256), 'Super Adm
 - Set date range
 - Choose format (PDF, Excel, CSV)
 - Click "Generate"
+
+#### **5B. Advanced Reporting with Filtering**
+The advanced reporting system provides detailed insights with powerful filtering capabilities.
+
+**Report Types Available**
+
+**1. User Registration Report**
+- Time period: Custom date range
+- Includes:
+  - Total registrations
+  - Approved registrations
+  - Pending registrations
+  - Rejected registrations
+  - User demographics
+  - Registration source
+- Filter options:
+  - Date range (from/to)
+  - Approval status
+  - User role
+  - Registration status
+
+**2. Product Inventory Report**
+- Stock levels and tracking:
+  - Total products
+  - Stock quantity by product
+  - Low stock items
+  - Out of stock items
+  - Stock value
+- Filter options:
+  - Category
+  - Stock level (low, medium, high, out)
+  - Price range
+  - Product status (active/inactive)
+  - Supplier
+
+**3. Order Report**
+- Order analytics:
+  - Total orders placed
+  - Order status distribution
+  - Order value analysis
+  - Average order value
+  - Peak ordering times
+- Filter options:
+  - Date range
+  - Order status (Pending, Processing, Shipped, Completed, Cancelled)
+  - Customer segment
+  - Order value range
+  - Fulfillment status
+
+**4. Revenue Report**
+- Financial metrics:
+  - Total revenue
+  - Revenue by product
+  - Revenue by category
+  - Revenue growth
+  - Profit margins
+  - Payment methods
+- Filter options:
+  - Date range (daily, weekly, monthly, yearly)
+  - Product category
+  - Order status
+  - Customer segment
+  - Geographic region
+
+**5. Activity Audit Report**
+- System activity tracking:
+  - All user actions
+  - Admin activities
+  - Login patterns
+  - Data changes
+  - Access attempts
+  - Security events
+- Filter options:
+  - Date range
+  - User or admin
+  - Activity type
+  - Severity level
+  - Success/failure status
+
+**Generating Reports with Filters**
+
+**Step 1: Select Report Type**
+- Click on desired report type
+
+**Step 2: Set Date Range**
+- "From Date": Click calendar, select start date
+- "To Date": Click calendar, select end date
+- Preset options: Today, This Week, This Month, This Year, Custom
+
+**Step 3: Apply Filters**
+- Click "Add Filter" for each filter type
+- Select filter criteria
+- Enter filter value
+- Multiple filters work together (AND logic)
+
+**Step 4: Generate Report**
+- Click "Generate" or "Preview"
+- System processes data
+- Report displays with filtered results
+- Shows total records and summary statistics
+
+**Step 5: Export Report**
+
+**Export to PDF**
+- Click "Export as PDF"
+- Report formatted for printing
+- Includes headers, footers, page numbers
+- Charts and graphs included
+- File saved as: `report_YYYYMMDD.pdf`
+
+**Export to Excel**
+- Click "Export as Excel"
+- Spreadsheet format with columns
+- Can open in Excel, Google Sheets, etc.
+- Formulas and calculations included
+- Multiple worksheets for different data
+- File saved as: `report_YYYYMMDD.xlsx`
+
+**Export to CSV**
+- Click "Export as CSV"
+- Comma-separated values format
+- Compatible with all spreadsheet programs
+- Minimal formatting
+- File saved as: `report_YYYYMMDD.csv`
+
+**Report Customization**
+- **Columns Selection**: Choose which columns to display
+- **Sorting**: Sort by any column (ascending/descending)
+- **Grouping**: Group results by category
+- **Summaries**: Include subtotals and totals
+- **Charts**: Add visual graphs and charts
+
+**Report Examples**
+
+*Example 1: Monthly Revenue Report*
+- Filter: Date range = Last 30 days, Status = Completed orders only
+- Shows: Total revenue $5,234.50, Orders: 87, Avg order value: $60.17
+- Export: PDF with charts showing daily revenue trend
+
+*Example 2: Low Stock Inventory Report*
+- Filter: Stock level = Low (< 10 units)
+- Shows: 12 products needing restock
+- Export: Excel with reorder recommendations
+
+*Example 3: User Registration Report*
+- Filter: Date range = This month, Status = Pending approval
+- Shows: 24 pending registrations waiting for approval
+- Includes: Demographic data, registration dates
+
+**Schedule Reports**
+- Set automated report generation
+- Email reports on schedule (daily, weekly, monthly)
+- Choose recipients
+- Select report type and filters
+- Reports delivered automatically
+
+**Report Performance**
+- Large datasets may take time to process
+- System optimizes for efficiency
+- Use date ranges to limit data
+- Archive old reports when not needed
 
 ---
 
